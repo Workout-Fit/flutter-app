@@ -29,6 +29,8 @@ dependencies:
   flutter_speed_dial: 4.0.0-dev.1
   qr_flutter: ^4.0.0
   qr_code_scanner: ^0.5.1
+  animated_theme_switcher: ^2.0.1
+  graphql_flutter: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -47,11 +49,15 @@ flutter_icons:
 flutter:
   assets:
     - assets/images/
+    - assets/json/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  fonts:
+    - family:  Workout
+      fonts:
+        - asset: assets/fonts/Workout.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

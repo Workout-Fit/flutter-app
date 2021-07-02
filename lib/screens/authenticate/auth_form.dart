@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../routes.dart';
-import '../theme/theme.dart';
+import 'package:workout/screens/home/workouts.dart';
 
 class AuthForm extends StatefulWidget {
   final bool signUp;
@@ -42,9 +41,7 @@ class AuthFormState extends State<AuthForm> {
             hintText: "Password",
             suffixIcon: IconButton(
               icon: Icon(
-                _passwordVisible ? Icons.visibility_off : Icons.visibility,
-                color: mediumEmphasisBlack,
-              ),
+                  _passwordVisible ? Icons.visibility_off : Icons.visibility),
               onPressed: () {
                 setState(() {
                   _passwordVisible = !_passwordVisible;
@@ -66,7 +63,7 @@ class AuthFormState extends State<AuthForm> {
               if (_formKey.currentState!.validate()) {
                 ScaffoldMessenger.of(context)
                     .showSnackBar(SnackBar(content: Text('Processing Data')));
-                Navigator.pushNamed(context, routeWorkoutList);
+                Navigator.pushNamed(context, WorkoutsPage.routeName);
               }
             },
             child: Text(widget.signUp ? "SIGN-UP" : "SIGN-IN"),

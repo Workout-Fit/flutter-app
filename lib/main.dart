@@ -1,9 +1,10 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:workout/routes.dart';
-import 'package:workout/screens/authenticate.dart';
-import 'package:workout/screens/home.dart';
-import 'package:workout/screens/scan_workout_qr.dart';
+import 'package:workout/screens/authenticate/login.dart';
+import 'package:workout/screens/home/index.dart';
+import 'package:workout/screens/scan_qr/index.dart';
+import 'package:workout/screens/workout_master_detail/index.dart';
+import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
 import 'package:workout/theme/theme.dart';
 
 void main() {
@@ -14,23 +15,38 @@ class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    AppTheme appTheme = AppTheme();
-    return Provider.value(
-      value: appTheme,
-      child: MaterialApp(
+    final isPlatformDark =
+        WidgetsBinding.instance!.window.platformBrightness == Brightness.dark;
+    final theme = isPlatformDark ? darkTheme : lightTheme;
+
+    return ThemeProvider(
+      initTheme: theme,
+      builder: (_, currentTheme) => MaterialApp(
           initialRoute: '/login',
           title: 'Workout',
-          theme: appTheme.lightTheme,
+          theme: currentTheme,
           onGenerateRoute: (settings) {
             late Widget page;
-            if (settings.name == routeLogin)
-              page = AuthenticationPage();
-            else if (settings.name == routeQRScan)
-              page = ScanWorkoutQR();
-            else
-              page = HomePage(routeName: settings.name ?? "");
+            switch (settings.name) {
+              case LoginPage.routeName:
+                page = LoginPage();
+                break;
+              case ScanQRPage.routeName:
+                page = ScanQRPage();
+                break;
+              case WorkoutMasterDetailPage.routeName:
+                final args = settings.arguments as WorkoutMasterDetailArguments;
+                page = WorkoutMasterDetailPage(
+                  readOnly: args.readOnly,
+                  workoutId: args.workoutId,
+                );
+                break;
+              default:
+                page = HomePage(routeName: settings.name ?? "");
+                break;
+            }
 
-            return MaterialPageRoute<dynamic>(
+            return MaterialPageRoute(
               builder: (context) => page,
               settings: settings,
             );

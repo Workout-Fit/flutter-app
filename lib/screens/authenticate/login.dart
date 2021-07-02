@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:workout/containers/auth_form.dart';
-import 'package:workout/theme/theme.dart';
+import 'package:workout/screens/authenticate/auth_form.dart';
 
-class AuthenticationPage extends StatefulWidget {
-  const AuthenticationPage({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  static const routeName = "/login";
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  _AuthenticationPageState createState() => _AuthenticationPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _AuthenticationPageState extends State<AuthenticationPage> {
+class _LoginPageState extends State<LoginPage> {
   bool _signUp = true;
 
   @override
@@ -23,7 +23,6 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 child: Image.asset("assets/images/pattern.png"),
               ),
               Container(
-                color: surface,
                 padding: EdgeInsets.only(left: 32.0, right: 32.0),
                 child: Container(
                   child: Column(

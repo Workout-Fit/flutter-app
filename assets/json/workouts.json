@@ -1,0 +1,58 @@
+[{
+
+    "author_id": "1",
+    "workout_id": "638127963",
+    "name":  "Ficha A",
+    "description": "Esta ficha deve ser feita na terça e quinta.",
+    "creation_date": "46283746123",
+    "based_on": ""
+  },
+  {
+    "author_id":"2",
+    "workout_id": "638127962",
+    "name":  "Ficha B",
+    "description": "Esta ficha deve ser feita na segunda.",
+    "creation_date": "46283746123",
+    "based_on": ""
+  },
+  {
+    "author_id": "2",
+    "workout_id": "638127966",
+    "name":  "Ficha C (Perna)",
+    "description": "Esta ficha deve ser feita na sexta e quarta",
+    "creation_date": "46283746123",
+    "based_on": ""
+  },
+  {
+    "author_id": "2",
+    "workout_id": "638127968",
+    "name":  "Ficha D",
+    "description": "Esta ficha deve ser feita na terça e quinta.",
+    "creation_date": "46283746123",
+    "based_on": ""
+  },
+  {
+    "author_id": "2",
+    "workout_id": "638127923",
+    "name":  "Ficha E",
+    "description": "Esta ficha deve ser feita na terça e quinta.",
+    "creation_date": "46283746123",
+    "based_on": ""
+  },
+  {
+    "author_id": "1",
+    "workout_id": "638127923",
+    "name":  "Ficha Antiga A",
+    "description": "Esta ficha deve ser feita na terça e quinta.",
+    "creation_date": "46283746123",
+    "based_on": ""
+  },
+  {
+    "author_id": "1",
+    "workout_id": "638127923",
+    "name":  "Ficha antiga C",
+    "description": "Esta ficha deve ser feita na terça e quinta.",
+    "creation_date": "46283746123",
+    "based_on": ""
+  }
+]
