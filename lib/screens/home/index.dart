@@ -4,8 +4,7 @@ import 'package:workout/presentation/workout_icons.dart';
 import 'package:workout/screens/home/profile.dart';
 import 'package:workout/screens/home/workouts.dart';
 import 'package:workout/screens/scan_qr/index.dart';
-import 'package:workout/screens/workout_master_detail/index.dart';
-import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
+import 'package:workout/screens/workout_master_detail/new_workout.dart';
 
 class HomePage extends StatefulWidget {
   final String routeName;
@@ -56,10 +55,7 @@ class _HomePageState extends State<HomePage> {
                     SpeedDialChild(
                       onTap: () => Navigator.pushNamed(
                         context,
-                        WorkoutMasterDetailPage.routeName,
-                        arguments: WorkoutMasterDetailArguments(
-                          readOnly: false,
-                        ),
+                        NewWorkoutPage.routeName,
                       ),
                       child: Icon(Icons.add),
                       label: "Add Workout",

@@ -1,13 +1,18 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:workout/screens/authenticate/login.dart';
 import 'package:workout/screens/home/index.dart';
 import 'package:workout/screens/scan_qr/index.dart';
-import 'package:workout/screens/workout_master_detail/index.dart';
+import 'package:workout/screens/workout_master_detail/new_workout.dart';
+import 'package:workout/screens/workout_master_detail/workout.dart';
 import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
 import 'package:workout/theme/theme.dart';
 
-void main() {
+import 'graphql_provider.dart';
+
+void main() async {
+  await initHiveForFlutter();
   runApp(App());
 }
 
@@ -21,7 +26,9 @@ class App extends StatelessWidget {
 
     return ThemeProvider(
       initTheme: theme,
-      builder: (_, currentTheme) => MaterialApp(
+      builder: (_, currentTheme) => GraphqlProvider(
+        hostUri: "http://192.168.18.6:4000",
+        child: MaterialApp(
           initialRoute: '/login',
           title: 'Workout',
           theme: currentTheme,
@@ -37,9 +44,12 @@ class App extends StatelessWidget {
               case WorkoutMasterDetailPage.routeName:
                 final args = settings.arguments as WorkoutMasterDetailArguments;
                 page = WorkoutMasterDetailPage(
-                  readOnly: args.readOnly,
+                  newWorkout: args.newWorkout,
                   workoutId: args.workoutId,
                 );
+                break;
+              case NewWorkoutPage.routeName:
+                page = NewWorkoutPage();
                 break;
               default:
                 page = HomePage(routeName: settings.name ?? "");
@@ -50,7 +60,9 @@ class App extends StatelessWidget {
               builder: (context) => page,
               settings: settings,
             );
-          }),
+          },
+        ),
+      ),
     );
   }
 }

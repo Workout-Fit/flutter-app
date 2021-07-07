@@ -13,6 +13,7 @@ const surface = Color(0xFFFAFAFA);
 final lightTheme = ThemeData(
   primarySwatch: Colors.deepPurple,
   primaryColor: primaryColor,
+  accentColor: primaryColor,
   fontFamily: GoogleFonts.getFont('Overpass').fontFamily,
   textTheme: TextTheme(
     headline3: TextStyle(

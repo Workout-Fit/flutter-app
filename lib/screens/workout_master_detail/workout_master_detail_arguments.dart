@@ -1,6 +1,6 @@
 class WorkoutMasterDetailArguments {
   final String? workoutId;
-  final bool readOnly;
+  final bool newWorkout;
 
-  WorkoutMasterDetailArguments({this.workoutId, required this.readOnly});
+  WorkoutMasterDetailArguments({this.workoutId, this.newWorkout = false});
 }

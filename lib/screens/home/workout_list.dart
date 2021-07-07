@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:workout/screens/workout_master_detail/index.dart';
+import 'package:workout/api/schema.dart';
+import 'package:workout/presentation/workout_icons.dart';
+import 'package:workout/screens/workout_master_detail/workout.dart';
 import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
-import 'package:workout/widgets/workout_card.dart';
-import 'package:workout/models/workout.dart';
+import 'package:workout/widgets/item_card.dart';
 
 class WorkoutList extends StatelessWidget {
-  final List<Workout>? workouts;
+  final List<GetWorkoutsByUserId$Query$GetWorkoutsByUserId>? workouts;
 
   const WorkoutList({Key? key, this.workouts = const []}) : super(key: key);
 
@@ -18,15 +19,28 @@ class WorkoutList extends StatelessWidget {
             separatorBuilder: (BuildContext context, int index) => SizedBox(
               height: 16.0,
             ),
-            itemBuilder: (BuildContext context, int index) => WorkoutCard(
-              workout: workouts![index],
+            itemBuilder: (BuildContext context, int index) => ItemCard(
+              label: [
+                Icon(
+                  WorkoutIcons.barbell,
+                  size: 16.0,
+                ),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  workouts![index].exercises!.length.toString(),
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ],
               onTap: () => Navigator.of(context, rootNavigator: true).pushNamed(
                 WorkoutMasterDetailPage.routeName,
                 arguments: WorkoutMasterDetailArguments(
-                  readOnly: true,
                   workoutId: workouts![index].id,
                 ),
               ),
+              title: workouts![index].name,
+              subtitle: workouts![index].muscleGroups!.join(", "),
             ),
           ),
         )

@@ -1,0 +1,52 @@
+
+fragment workoutMasterDetail on Workout {
+  __typename
+    id
+    userId
+    basedOn {
+      id
+      user {
+        username
+      }
+    }
+    name
+    description
+    muscleGroups
+    exercises {
+      exerciseId
+      sets
+      repetitions
+      rest
+      notes
+      exercise {
+        name
+        muscleGroup {
+          name
+        }
+      }
+    }
+}
+
+query GetWorkoutsByUserId($userId: String!) {
+  getWorkoutsByUserId(userId: $userId) {
+    __typename
+    id
+    name
+    muscleGroups
+    exercises {
+      exerciseId
+    }
+  }
+}
+
+query GetWorkoutById($id: String!) {
+  getWorkoutById(id: $id) {
+    ...workoutMasterDetail
+  }
+}
+
+mutation CreateWorkout($workout: WorkoutInput!) {
+  createWorkout(workout: $workout) {
+    ...workoutMasterDetail
+  }
+}

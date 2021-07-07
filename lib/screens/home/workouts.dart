@@ -1,39 +1,14 @@
-import 'dart:convert';
-
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:workout/api/schema.dart';
 import 'package:workout/screens/home/workout_list.dart';
-import 'package:workout/models/workout.dart';
 import 'package:workout/theme/theme.dart';
 
-class WorkoutsPage extends StatefulWidget {
+class WorkoutsPage extends StatelessWidget {
   static const routeName = "/workouts";
-
-  @override
-  WorkoutsPageState createState() => WorkoutsPageState();
-}
-
-class WorkoutsPageState extends State<WorkoutsPage> {
-  List<Workout> _workouts = [];
-
-  void _fetchWorkouts() async {
-    Iterable response = await json.decode(
-      await rootBundle.loadString('assets/json/workouts.json'),
-    );
-    setState(() {
-      _workouts = List<Workout>.from(response.map(
-        (workout) => Workout.fromJson(workout),
-      ));
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    this._fetchWorkouts();
-  }
 
   @override
   Widget build(BuildContext context) => Container(
@@ -93,7 +68,34 @@ class WorkoutsPageState extends State<WorkoutsPage> {
             SizedBox(
               height: 16.0,
             ),
-            WorkoutList(workouts: _workouts),
+            Query(
+              options: QueryOptions(
+                document: GET_WORKOUTS_BY_USER_ID_QUERY_DOCUMENT,
+                variables: {'userId': '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc'},
+              ),
+              builder: (
+                QueryResult result, {
+                VoidCallback? refetch,
+                FetchMore? fetchMore,
+              }) =>
+                  result.isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            semanticsLabel: "Loading workout",
+                          ),
+                        )
+                      : WorkoutList(
+                          workouts: List<
+                              GetWorkoutsByUserId$Query$GetWorkoutsByUserId>.from(
+                            result.data?['getWorkoutsByUserId']?.map(
+                                  (workout) =>
+                                      GetWorkoutsByUserId$Query$GetWorkoutsByUserId
+                                          .fromJson(workout),
+                                ) ??
+                                [],
+                          ),
+                        ),
+            ),
           ],
         ),
       );

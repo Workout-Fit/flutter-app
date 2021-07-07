@@ -1,0 +1,10 @@
+query SearchExercises($exerciseName: String) {
+  getExercises(name: $exerciseName) {
+    __typename
+    id
+    name
+    muscleGroup {
+      name
+    }
+  }
+}

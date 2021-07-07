@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:workout/models/workout.dart';
-import 'package:workout/presentation/workout_icons.dart';
 
-class WorkoutCard extends StatelessWidget {
-  final Workout workout;
+class ItemCard extends StatelessWidget {
   final EdgeInsets margin;
+  final String title;
+  final String? subtitle;
+  final List<Widget>? label;
   final void Function()? onTap;
 
-  const WorkoutCard({
+  const ItemCard({
     Key? key,
-    required this.workout,
-    required this.onTap,
+    this.onTap,
+    required this.title,
     this.margin = const EdgeInsets.symmetric(horizontal: 16.0),
+    this.subtitle = "",
+    this.label = const [],
   }) : super(key: key);
 
   @override
@@ -32,35 +34,24 @@ class WorkoutCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        workout.name,
-                        style: Theme.of(context).textTheme.headline6,
+                      Flexible(
+                        child: Text(
+                          title,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
                       ),
+                      SizedBox(width: 16.0),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Icon(
-                            WorkoutIcons.barbell,
-                            size: 16.0,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            "10",
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ],
+                        children: label!,
                       ),
                     ],
                   ),
                   SizedBox(
                     height: 16.0,
                   ),
-                  Text(
-                    "Panturrilha, peito",
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
+                  Text(subtitle!, style: Theme.of(context).textTheme.subtitle2),
                 ],
               ),
             ),
