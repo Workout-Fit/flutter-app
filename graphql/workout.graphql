@@ -1,6 +1,18 @@
+query GetWorkoutsByUserId($userId: String!) {
+  getWorkoutsByUserId(userId: $userId) {
+    __typename
+    id
+    name
+    muscleGroups
+    exercises {
+      exerciseId
+    }
+  }
+}
 
-fragment workoutMasterDetail on Workout {
-  __typename
+query GetWorkoutById($id: String!) {
+  getWorkoutById(id: $id) {
+    __typename
     id
     userId
     basedOn {
@@ -25,28 +37,11 @@ fragment workoutMasterDetail on Workout {
         }
       }
     }
-}
-
-query GetWorkoutsByUserId($userId: String!) {
-  getWorkoutsByUserId(userId: $userId) {
-    __typename
-    id
-    name
-    muscleGroups
-    exercises {
-      exerciseId
-    }
-  }
-}
-
-query GetWorkoutById($id: String!) {
-  getWorkoutById(id: $id) {
-    ...workoutMasterDetail
   }
 }
 
 mutation CreateWorkout($workout: WorkoutInput!) {
   createWorkout(workout: $workout) {
-    ...workoutMasterDetail
+    id
   }
 }

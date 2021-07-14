@@ -24,37 +24,46 @@ class App extends StatelessWidget {
         WidgetsBinding.instance!.window.platformBrightness == Brightness.dark;
     final theme = isPlatformDark ? darkTheme : lightTheme;
 
-    return ThemeProvider(
-      initTheme: theme,
-      builder: (_, currentTheme) => GraphqlProvider(
-        hostUri: "http://192.168.18.6:4000",
-        child: MaterialApp(
+    return GraphqlProvider(
+      hostUri: "http://192.168.18.6:4000",
+      child: ThemeProvider(
+        initTheme: theme,
+        builder: (_, currentTheme) => MaterialApp(
           initialRoute: '/login',
           title: 'Workout',
           theme: currentTheme,
           onGenerateRoute: (settings) {
             late Widget page;
-            switch (settings.name) {
-              case LoginPage.routeName:
-                page = LoginPage();
-                break;
-              case ScanQRPage.routeName:
-                page = ScanQRPage();
-                break;
-              case WorkoutMasterDetailPage.routeName:
-                final args = settings.arguments as WorkoutMasterDetailArguments;
-                page = WorkoutMasterDetailPage(
-                  newWorkout: args.newWorkout,
-                  workoutId: args.workoutId,
-                );
-                break;
-              case NewWorkoutPage.routeName:
-                page = NewWorkoutPage();
-                break;
-              default:
-                page = HomePage(routeName: settings.name ?? "");
-                break;
-            }
+            final path = settings.name!.split("/");
+            if (path[1] == 'view' && path.length == 3) {
+              print(path[2]);
+              page = WorkoutMasterDetailPage(
+                newWorkout: false,
+                workoutId: path[2],
+              );
+            } else
+              switch (settings.name) {
+                case LoginPage.routeName:
+                  page = LoginPage();
+                  break;
+                case ScanQRPage.routeName:
+                  page = ScanQRPage();
+                  break;
+                case WorkoutMasterDetailPage.routeName:
+                  final args =
+                      settings.arguments as WorkoutMasterDetailArguments;
+                  page = WorkoutMasterDetailPage(
+                    newWorkout: args.newWorkout,
+                    workoutId: args.workoutId,
+                  );
+                  break;
+                case NewWorkoutPage.routeName:
+                  page = NewWorkoutPage();
+                  break;
+                default:
+                  page = HomePage(routeName: settings.name ?? "");
+                  break;
+              }
 
             return MaterialPageRoute(
               builder: (context) => page,

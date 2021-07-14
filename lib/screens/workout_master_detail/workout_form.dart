@@ -18,16 +18,16 @@ class _WorkoutFormState extends State<WorkoutForm> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(hintText: "Workout name"),
+                decoration: const InputDecoration(hintText: "Workout name"),
                 validator: (value) {
                   if (value == null || value.isEmpty)
                     return "Workout name required.";
                   return null;
                 },
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Description (Optional), max. 140 characters.",
                   hintMaxLines: 2,
                 ),

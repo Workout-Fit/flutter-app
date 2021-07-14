@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:workout/screens/workout_master_detail/workout.dart';
+import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
 
 class ScanQRPage extends StatefulWidget {
   static const routeName = "/qr-scan";
@@ -15,7 +17,6 @@ class ScanQRPage extends StatefulWidget {
 
 class _ScanQRPageState extends State<ScanQRPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  Barcode? result;
   late QRViewController controller;
 
   @override
@@ -35,34 +36,28 @@ class _ScanQRPageState extends State<ScanQRPage> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
+      controller.pauseCamera();
       HapticFeedback.lightImpact();
-      setState(() {
-        result = scanData;
-      });
+      Navigator.of(context)
+          .pushNamed(
+            WorkoutMasterDetailPage.routeName,
+            arguments: WorkoutMasterDetailArguments(
+              workoutId: scanData.code,
+            ),
+          )
+          .then((value) => controller.resumeCamera());
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: <Widget>[
-        Expanded(
-          flex: 5,
-          child: QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
-          ),
+      body: Container(
+        child: QRView(
+          key: qrKey,
+          onQRViewCreated: _onQRViewCreated,
         ),
-        Expanded(
-          flex: 1,
-          child: Center(
-            child: (result != null)
-                ? Text('Data: ${result!.code}')
-                : Text('Scan a code'),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 }

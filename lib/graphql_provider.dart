@@ -19,8 +19,10 @@ class GraphqlProvider extends StatelessWidget {
         );
 
   @override
-  Widget build(BuildContext context) => GraphQLProvider(
-        client: client,
-        child: child,
-      );
+  Widget build(BuildContext context) {
+    return GraphQLProvider(
+      client: client,
+      child: child,
+    );
+  }
 }

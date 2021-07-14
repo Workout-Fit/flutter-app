@@ -57,13 +57,13 @@ class _HomePageState extends State<HomePage> {
                         context,
                         NewWorkoutPage.routeName,
                       ),
-                      child: Icon(Icons.add),
+                      child: const Icon(Icons.add),
                       label: "Add Workout",
                     ),
                     SpeedDialChild(
                       onTap: () =>
                           Navigator.pushNamed(context, ScanQRPage.routeName),
-                      child: Icon(Icons.qr_code_scanner),
+                      child: const Icon(Icons.qr_code_scanner),
                       label: "Import Workout",
                     ),
                   ],
@@ -71,12 +71,12 @@ class _HomePageState extends State<HomePage> {
               : null,
           bottomNavigationBar: BottomNavigationBar(
             items: [
-              BottomNavigationBarItem(
-                icon: Icon(WorkoutIcons.barbell),
+              const BottomNavigationBarItem(
+                icon: const Icon(WorkoutIcons.barbell),
                 label: "Workouts",
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person),
+              const BottomNavigationBarItem(
+                icon: const Icon(Icons.person),
                 label: "Profile",
               ),
             ],

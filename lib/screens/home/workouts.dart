@@ -85,6 +85,7 @@ class WorkoutsPage extends StatelessWidget {
                           ),
                         )
                       : WorkoutList(
+                          onRefresh: refetch!,
                           workouts: List<
                               GetWorkoutsByUserId$Query$GetWorkoutsByUserId>.from(
                             result.data?['getWorkoutsByUserId']?.map(

@@ -1,10 +1,10 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
-import 'package:workout/api/schema.dart';
+import 'package:workout/api/schema.graphql.dart';
 import 'package:workout/widgets/item_card.dart';
 
 class ExerciseList extends StatelessWidget {
-  final List<WorkoutMasterDetailMixin$Exercises?> exercises;
+  final List<GetWorkoutById$Query$GetWorkoutById$Exercises?> exercises;
   const ExerciseList({Key? key, required this.exercises}) : super(key: key);
 
   @override
@@ -19,7 +19,7 @@ class ExerciseList extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 16.0),
                   itemCount: exercises.length,
                   separatorBuilder: (BuildContext context, int index) {
-                    return SizedBox(height: 16.0);
+                    return const SizedBox(height: 16.0);
                   },
                   itemBuilder: (BuildContext context, int index) => ItemCard(
                       title: exercises[index]?.exercise?.name ?? "",

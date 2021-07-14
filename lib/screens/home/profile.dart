@@ -12,6 +12,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) => Container(
-        child: Center(child: Text("ProfilePage")),
+        child: Center(
+          child: const Text("ProfilePage"),
+        ),
       );
 }

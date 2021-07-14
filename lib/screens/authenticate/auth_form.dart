@@ -27,11 +27,11 @@ class AuthFormState extends State<AuthForm> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Username",
                 ),
               ),
-              SizedBox(height: 24.0),
+              const SizedBox(height: 24.0),
             ],
           ),
           visible: widget.signUp,
@@ -53,16 +53,17 @@ class AuthFormState extends State<AuthForm> {
         ),
         TextButton(
           onPressed: () {},
-          child: Text("Forgot your password?"),
+          child: const Text("Forgot your password?"),
         ),
-        SizedBox(height: 24.0),
+        const SizedBox(height: 24.0),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text('Processing Data')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: const Text('Processing Data'),
+                ));
                 Navigator.pushNamed(context, WorkoutsPage.routeName);
               }
             },
