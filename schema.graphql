@@ -39,8 +39,9 @@ type MuscleGroup {
 }
 
 type Mutation {
-  copyWorkoutById(userId: String!, workoutId: String!): Workout
+  copyWorkoutById(id: String!, userId: String!): Workout
   createWorkout(workout: WorkoutInput!): Workout
+  deleteWorkout(id: String!): Workout
 }
 
 type ProfileInfo {

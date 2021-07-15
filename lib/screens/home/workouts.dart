@@ -79,9 +79,11 @@ class WorkoutsPage extends StatelessWidget {
                 FetchMore? fetchMore,
               }) =>
                   result.isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            semanticsLabel: "Loading workout",
+                      ? Expanded(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              semanticsLabel: "Loading workout",
+                            ),
                           ),
                         )
                       : WorkoutList(

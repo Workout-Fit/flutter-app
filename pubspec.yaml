@@ -26,9 +26,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^2.1.0
   provider: ^5.0.0
-  flutter_speed_dial: 4.0.0-dev.1
+  flutter_speed_dial: ^4.1.0
   qr_flutter: ^4.0.0
-  qr_code_scanner: ^0.5.1
+  qr_code_scanner: ^1.0.0-alpha.1
   animated_theme_switcher: ^2.0.1
   graphql_flutter: ^5.0.0
   json_annotation: ^4.0.1
@@ -38,6 +38,7 @@ dependencies:
   dropdown_search: ^0.6.3
   loading_overlay: ^0.3.0
   fluttertoast: ^8.0.7
+  permission_handler: ^8.1.2
 
 dev_dependencies:
   flutter_test:

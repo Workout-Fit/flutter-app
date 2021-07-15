@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:workout/api/schema.dart';
+import 'package:workout/screens/home/workouts.dart';
 import 'package:workout/screens/workout_master_detail/exercise_list.dart';
 import 'package:workout/widgets/block_button.dart';
 import 'exercise_form.dart';
@@ -28,6 +30,7 @@ class WorkoutMasterDetailPage extends StatefulWidget {
 class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
   final _formKey = GlobalKey<FormState>();
   bool _editMode = false;
+  bool _isLoading = false;
 
   Widget buildEditForm() => Form(
         key: _formKey,
@@ -56,8 +59,7 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
         ),
       );
 
-  Future<dynamic> showAddExerciseModal(context) =>
-      showModalBottomSheet<dynamic>(
+  Future<dynamic> showAddExerciseModal() => showModalBottomSheet<dynamic>(
         isScrollControlled: true,
         context: context,
         builder: (BuildContext context) => ExerciseForm(
@@ -65,7 +67,7 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
         ),
       );
 
-  Future<dynamic> showShareWorkoutModal(context, String workoutId) {
+  Future<dynamic> showShareWorkoutModal(String workoutId) {
     return showModalBottomSheet<dynamic>(
       isScrollControlled: true,
       context: context,
@@ -82,7 +84,7 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                 ),
                 const SizedBox(height: 32.0),
                 QrImage(
-                  data: workoutId,
+                  data: "http://workout.app/view/$workoutId",
                   padding: EdgeInsets.zero,
                   foregroundColor:
                       ThemeProvider.of(context)?.brightness == Brightness.light
@@ -149,8 +151,10 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                     "Based on ${workout.basedOn?.user?.username ?? ""}",
                     style: Theme.of(context).textTheme.caption,
                   ),
-                Text(workout.name,
-                    style: Theme.of(context).textTheme.headline3),
+                Text(
+                  workout.name,
+                  style: Theme.of(context).textTheme.headline3,
+                ),
                 const SizedBox(height: 16),
                 Text(workout.description ?? ""),
                 const SizedBox(height: 24.0),
@@ -168,121 +172,188 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) => WillPopScope(
-        onWillPop: () async {
-          if (_editMode && widget.workoutId != null) {
-            setState(() {
-              _editMode = true;
-            });
-            return false;
-          }
-          return true;
-        },
-        child: Query(
-          options: QueryOptions(
-            document: GET_WORKOUT_BY_ID_QUERY_DOCUMENT,
-            variables: <String, dynamic>{'id': widget.workoutId},
-          ),
-          builder: (
-            QueryResult result, {
-            VoidCallback? refetch,
-            FetchMore? fetchMore,
-          }) =>
-              Scaffold(
-            backgroundColor:
-                ThemeProvider.of(context)?.brightness == Brightness.light
-                    ? Colors.white
-                    : Colors.black,
-            body: Container(
-              margin: EdgeInsets.only(top: 48.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: Icon(Icons.arrow_back_ios),
-                        ),
-                        const SizedBox(width: 8.0),
-                        if (_editMode)
-                          Text(
-                            "Edit workout",
-                            style: Theme.of(context).textTheme.headline4,
-                          ),
-                        if (!result.isLoading)
-                          Flexible(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: _editMode
-                                  ? IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(Icons.save),
-                                    )
-                                  : PopupMenuButton<String>(
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          value: "share",
-                                          child: Row(
-                                            children: <Widget>[
-                                              const Icon(Icons.share_outlined),
-                                              const Text('Share Workout'),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                      onSelected: (value) {
-                                        if (value == "share") {
-                                          showShareWorkoutModal(
-                                            context,
-                                            result.data?['getWorkoutById']
-                                                ['id'],
-                                          );
-                                        }
-                                      },
-                                      icon: const Icon(Icons.more_vert),
-                                    ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  if (result.isLoading)
-                    Container(
-                      child: Flexible(
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            semanticsLabel: "Loading workout",
-                          ),
-                        ),
-                      ),
-                    )
-                  else ...<Widget>[
-                    _editMode
-                        ? buildEditForm()
-                        : _workoutInfo(
-                            GetWorkoutById$Query$GetWorkoutById.fromJson(
-                              result.data?['getWorkoutById'],
-                            ),
-                          ),
-                    if (_editMode)
-                      BlockButton(
-                        icon: Icons.add,
-                        onTap: () {
-                          showAddExerciseModal(context);
-                        },
-                        label: "ADD EXERCISE",
-                      ),
-                  ],
-                ],
-              ),
-            ),
+  Widget _popupMenu(
+    String workoutId,
+  ) {
+    return PopupMenuButton<String>(
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: "share",
+          child: Row(
+            children: <Widget>[
+              const Icon(Icons.share_outlined),
+              const Text('Share Workout'),
+            ],
           ),
         ),
-      );
+        PopupMenuItem(
+          value: "delete",
+          child: Row(
+            children: <Widget>[
+              const Icon(Icons.delete_outline),
+              const Text('Delete Workout'),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (value) {
+        if (value == "share") {
+          showShareWorkoutModal(workoutId);
+        } else if (value == "delete") {
+          showDialog(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: Text("Delete Workout"),
+                content: Text(
+                  "Are you sure you want to delete this workout?",
+                ),
+                actions: [
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  Mutation(
+                    options: MutationOptions(
+                      document: DELETE_WORKOUT_MUTATION_DOCUMENT,
+                      onCompleted: (dynamic resultData) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text('Workout deleted'),
+                        ));
+                        Navigator.of(context, rootNavigator: true).popUntil(
+                          ModalRoute.withName(WorkoutsPage.routeName),
+                        );
+                      },
+                    ),
+                    builder: (RunMutation runMutation, QueryResult? result) {
+                      return TextButton(
+                        onPressed: () {
+                          runMutation({'id': workoutId});
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Delete"),
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
+      icon: const Icon(Icons.more_vert),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (_editMode && widget.workoutId != null) {
+          setState(() {
+            _editMode = true;
+          });
+          return false;
+        }
+        return true;
+      },
+      child: Query(
+        options: QueryOptions(
+          document: GET_WORKOUT_BY_ID_QUERY_DOCUMENT,
+          variables: <String, dynamic>{'id': widget.workoutId},
+        ),
+        builder: (
+          QueryResult result, {
+          VoidCallback? refetch,
+          FetchMore? fetchMore,
+        }) {
+          GetWorkoutById$Query$GetWorkoutById? workout = result.isNotLoading
+              ? GetWorkoutById$Query$GetWorkoutById.fromJson(
+                  result.data?['getWorkoutById'],
+                )
+              : null;
+          return LoadingOverlay(
+            isLoading: _isLoading,
+            child: Scaffold(
+              backgroundColor:
+                  ThemeProvider.of(context)?.brightness == Brightness.light
+                      ? Colors.white
+                      : Colors.black,
+              body: Container(
+                margin: EdgeInsets.only(top: 48.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(Icons.arrow_back_ios),
+                          ),
+                          const SizedBox(width: 8.0),
+                          if (_editMode)
+                            Text(
+                              "Edit workout",
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                          if (result.isNotLoading)
+                            Flexible(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: (() {
+                                  if (workout!.userId ==
+                                      '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc') {
+                                    return _editMode
+                                        ? IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(Icons.save),
+                                          )
+                                        : _popupMenu(workout.id);
+                                  } else
+                                    return Text('');
+                                }()),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    if (result.isLoading)
+                      Container(
+                        child: Flexible(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              semanticsLabel: "Loading workout",
+                            ),
+                          ),
+                        ),
+                      )
+                    else ...<Widget>[
+                      _editMode ? buildEditForm() : _workoutInfo(workout!),
+                      if (_editMode)
+                        BlockButton(
+                          icon: Icons.add,
+                          onTap: () {
+                            showAddExerciseModal();
+                          },
+                          label: "ADD EXERCISE",
+                        ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

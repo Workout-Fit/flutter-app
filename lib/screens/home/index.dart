@@ -1,3 +1,4 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:workout/presentation/workout_icons.dart';
@@ -20,22 +21,26 @@ class _HomePageState extends State<HomePage> {
   int _navigationSelectedIndex = 0;
   ValueNotifier<bool> _dialOpen = ValueNotifier(false);
 
-  Route _onGenerateRoute(RouteSettings settings) => MaterialPageRoute(
-        builder: (context) => settings.name == ProfilePage.routeName
-            ? ProfilePage()
-            : WorkoutsPage(),
-        settings: settings,
-      );
+  Route _onGenerateRoute(RouteSettings settings) {
+    return MaterialPageRoute(
+      builder: (context) => settings.name == ProfilePage.routeName
+          ? ProfilePage()
+          : WorkoutsPage(),
+      settings: settings,
+    );
+  }
 
   @override
-  Widget build(BuildContext context) => WillPopScope(
-        onWillPop: () async {
-          if (_dialOpen.value) {
-            _dialOpen.value = false;
-            return false;
-          }
-          return true;
-        },
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (_dialOpen.value) {
+          _dialOpen.value = false;
+          return false;
+        }
+        return true;
+      },
+      child: ThemeSwitchingArea(
         child: Scaffold(
           body: Navigator(
             key: _navigatorKey,
@@ -100,5 +105,7 @@ class _HomePageState extends State<HomePage> {
             currentIndex: _navigationSelectedIndex,
           ),
         ),
-      );
+      ),
+    );
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:workout/regex.dart';
 import 'package:workout/screens/workout_master_detail/workout.dart';
 import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
 
@@ -36,16 +37,18 @@ class _ScanQRPageState extends State<ScanQRPage> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      controller.pauseCamera();
-      HapticFeedback.lightImpact();
-      Navigator.of(context)
-          .pushNamed(
-            WorkoutMasterDetailPage.routeName,
-            arguments: WorkoutMasterDetailArguments(
-              workoutId: scanData.code,
-            ),
-          )
-          .then((value) => controller.resumeCamera());
+      if (workoutURLRegEx.hasMatch(scanData.code)) {
+        controller.pauseCamera();
+        HapticFeedback.mediumImpact();
+        Navigator.of(context)
+            .pushNamed(
+              WorkoutMasterDetailPage.routeName,
+              arguments: WorkoutMasterDetailArguments(
+                workoutId: workoutURLRegEx.firstMatch(scanData.code)?.group(1),
+              ),
+            )
+            .then((value) => controller.resumeCamera());
+      }
     });
   }
 

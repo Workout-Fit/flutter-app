@@ -28,49 +28,52 @@ class App extends StatelessWidget {
       hostUri: "http://192.168.18.6:4000",
       child: ThemeProvider(
         initTheme: theme,
-        builder: (_, currentTheme) => MaterialApp(
-          initialRoute: '/login',
-          title: 'Workout',
-          theme: currentTheme,
-          onGenerateRoute: (settings) {
-            late Widget page;
-            final path = settings.name!.split("/");
-            if (path[1] == 'view' && path.length == 3) {
-              print(path[2]);
-              page = WorkoutMasterDetailPage(
-                newWorkout: false,
-                workoutId: path[2],
-              );
-            } else
-              switch (settings.name) {
-                case LoginPage.routeName:
-                  page = LoginPage();
-                  break;
-                case ScanQRPage.routeName:
-                  page = ScanQRPage();
-                  break;
-                case WorkoutMasterDetailPage.routeName:
-                  final args =
-                      settings.arguments as WorkoutMasterDetailArguments;
-                  page = WorkoutMasterDetailPage(
-                    newWorkout: args.newWorkout,
-                    workoutId: args.workoutId,
-                  );
-                  break;
-                case NewWorkoutPage.routeName:
-                  page = NewWorkoutPage();
-                  break;
-                default:
-                  page = HomePage(routeName: settings.name ?? "");
-                  break;
-              }
+        builder: (context, currentTheme) {
+          return MaterialApp(
+            initialRoute: '/login',
+            title: 'Workout',
+            theme: currentTheme,
+            onGenerateRoute: (settings) {
+              late Widget page;
+              final workoutId = new RegExp(r"^/view/([^\s]+)$")
+                  .firstMatch(settings.name ?? '')
+                  ?.group(1);
+              if (workoutId != null) {
+                page = WorkoutMasterDetailPage(
+                  newWorkout: false,
+                  workoutId: workoutId,
+                );
+              } else
+                switch (settings.name) {
+                  case LoginPage.routeName:
+                    page = LoginPage();
+                    break;
+                  case ScanQRPage.routeName:
+                    page = ScanQRPage();
+                    break;
+                  case WorkoutMasterDetailPage.routeName:
+                    final args =
+                        settings.arguments as WorkoutMasterDetailArguments;
+                    page = WorkoutMasterDetailPage(
+                      newWorkout: args.newWorkout,
+                      workoutId: args.workoutId,
+                    );
+                    break;
+                  case NewWorkoutPage.routeName:
+                    page = NewWorkoutPage();
+                    break;
+                  default:
+                    page = HomePage(routeName: settings.name ?? "");
+                    break;
+                }
 
-            return MaterialPageRoute(
-              builder: (context) => page,
-              settings: settings,
-            );
-          },
-        ),
+              return MaterialPageRoute(
+                builder: (context) => page,
+                settings: settings,
+              );
+            },
+          );
+        },
       ),
     );
   }

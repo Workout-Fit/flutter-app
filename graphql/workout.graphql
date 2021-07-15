@@ -45,3 +45,10 @@ mutation CreateWorkout($workout: WorkoutInput!) {
     id
   }
 }
+
+mutation DeleteWorkout($id: String!) {
+  deleteWorkout(id: $id) {
+    id
+    name
+  }
+}

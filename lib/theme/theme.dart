@@ -140,7 +140,7 @@ final darkTheme = ThemeData(
   ),
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(primaryColor),
+      foregroundColor: MaterialStateProperty.all(Colors.white),
       textStyle: MaterialStateProperty.all<TextStyle>(
         TextStyle(fontWeight: FontWeight.bold),
       ),
