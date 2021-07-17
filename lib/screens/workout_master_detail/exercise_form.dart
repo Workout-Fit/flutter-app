@@ -1,8 +1,9 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:graphql/client.dart';
 import 'package:workout/api/schema.dart';
+import 'package:workout/utils/graphql_client.dart';
 
 class ExerciseForm extends StatefulWidget {
   final void Function(GetWorkoutById$Query$GetWorkoutById$Exercises) onSubmit;
@@ -24,15 +25,17 @@ class _ExerciseFormState extends State<ExerciseForm> {
     filter,
     context,
   ) async {
-    QueryResult result = await GraphQLProvider.of(context).value.query(
-          QueryOptions(
-            document: SEARCH_EXERCISES_QUERY_DOCUMENT,
-            variables: {"exerciseName": filter},
-          ),
-        );
+    QueryResult result = await client.query(
+      QueryOptions(
+        document: SEARCH_EXERCISES_QUERY_DOCUMENT,
+        variables: {"exerciseName": filter},
+      ),
+    );
     return List<SearchExercises$Query$GetExercises>.from(
-        result.data?['getExercises'].map((exercise) =>
-            (SearchExercises$Query$GetExercises.fromJson(exercise)))).toList();
+      result.data?['getExercises'].map(
+        (exercise) => SearchExercises$Query$GetExercises.fromJson(exercise),
+      ),
+    ).toList();
   }
 
   @override

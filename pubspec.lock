@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.6.1"
+  bloc:
+    dependency: "direct main"
+    description:
+      name: bloc
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "7.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -162,48 +169,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
-  connectivity_plus:
-    dependency: transitive
-    description:
-      name: connectivity_plus
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.5"
-  connectivity_plus_linux:
-    dependency: transitive
-    description:
-      name: connectivity_plus_linux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
-  connectivity_plus_macos:
-    dependency: transitive
-    description:
-      name: connectivity_plus_macos
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
-  connectivity_plus_platform_interface:
-    dependency: transitive
-    description:
-      name: connectivity_plus_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
-  connectivity_plus_web:
-    dependency: transitive
-    description:
-      name: connectivity_plus_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
-  connectivity_plus_windows:
-    dependency: transitive
-    description:
-      name: connectivity_plus_windows
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
   convert:
     dependency: transitive
     description:
@@ -232,13 +197,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
-  dbus:
-    dependency: transitive
-    description:
-      name: dbus
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.4"
   dropdown_search:
     dependency: "direct main"
     description:
@@ -286,6 +244,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bloc:
+    dependency: "direct main"
+    description:
+      name: flutter_bloc
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "7.0.1"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -345,6 +310,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.0.7"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.14.2"
   frontend_server_client:
     dependency: transitive
     description:
@@ -423,19 +395,19 @@ packages:
     source: hosted
     version: "0.2.0"
   graphql:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: graphql
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.0"
-  graphql_flutter:
+  graphql_flutter_bloc:
     dependency: "direct main"
     description:
-      name: graphql_flutter
+      name: graphql_flutter_bloc
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
+    version: "0.7.0"
   graphs:
     dependency: transitive
     description:
@@ -444,7 +416,7 @@ packages:
     source: hosted
     version: "2.0.0"
   hive:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: hive
       url: "https://pub.dartlang.org"
@@ -541,6 +513,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  mockito:
+    dependency: "direct dev"
+    description:
+      name: mockito
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.11"
   native_device_orientation:
     dependency: transitive
     description:
@@ -577,7 +556,7 @@ packages:
     source: hosted
     version: "1.8.0"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       url: "https://pub.dartlang.org"

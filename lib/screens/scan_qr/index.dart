@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:workout/regex.dart';
+import 'package:workout/utils/regex.dart';
 import 'package:workout/screens/workout_master_detail/workout.dart';
 import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
 

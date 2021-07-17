@@ -1,11 +1,16 @@
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:graphql/client.dart';
+import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:workout/api/schema.dart';
+import 'package:workout/bloc/delete_workout_bloc.dart';
+import 'package:workout/bloc/workout_bloc.dart';
+import 'package:workout/utils/graphql_client.dart';
 import 'package:workout/screens/home/workouts.dart';
 import 'package:workout/screens/workout_master_detail/exercise_list.dart';
 import 'package:workout/widgets/block_button.dart';
@@ -29,8 +34,25 @@ class WorkoutMasterDetailPage extends StatefulWidget {
 
 class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
   final _formKey = GlobalKey<FormState>();
+  late WorkoutBloc _workoutBloc;
+  late DeleteWorkoutBloc _deleteWorkoutBloc;
   bool _editMode = false;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _workoutBloc = WorkoutBloc(client: client)
+      ..run(variables: {'id': widget.workoutId});
+    _deleteWorkoutBloc = DeleteWorkoutBloc(client: client);
+  }
+
+  @override
+  void dispose() {
+    _workoutBloc.dispose();
+    _deleteWorkoutBloc.dispose();
+    super.dispose();
+  }
 
   Widget buildEditForm() => Form(
         key: _formKey,
@@ -131,7 +153,7 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
     );
   }
 
-  Widget _workoutInfo(GetWorkoutById$Query$GetWorkoutById workout) {
+  Widget _workoutDetails(GetWorkoutById$Query$GetWorkoutById workout) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,6 +197,23 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
   Widget _popupMenu(
     String workoutId,
   ) {
+    Widget _deleteButton(bool loading) {
+      return AbsorbPointer(
+        absorbing: loading,
+        child: TextButton(
+          onPressed: () {
+            _deleteWorkoutBloc
+                .run(DeleteWorkoutArguments(id: workoutId).toJson());
+            setState(() {
+              _isLoading = true;
+            });
+            Navigator.of(context).pop();
+          },
+          child: Text("Delete"),
+        ),
+      );
+    }
+
     return PopupMenuButton<String>(
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -215,30 +254,34 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                       Navigator.of(context).pop();
                     },
                   ),
-                  Mutation(
-                    options: MutationOptions(
-                      document: DELETE_WORKOUT_MUTATION_DOCUMENT,
-                      onCompleted: (dynamic resultData) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text('Workout deleted'),
-                        ));
-                        Navigator.of(context, rootNavigator: true).popUntil(
-                          ModalRoute.withName(WorkoutsPage.routeName),
+                  BlocListener<DeleteWorkoutBloc,
+                      MutationState<DeleteWorkout$Mutation>>(
+                    bloc: _deleteWorkoutBloc,
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        completed: (_, __) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: const Text('Workout deleted'),
+                          ));
+                          Navigator.of(context, rootNavigator: true).popUntil(
+                            ModalRoute.withName(WorkoutsPage.routeName),
+                          );
+                        },
+                        orElse: () => {},
+                      );
+                    },
+                    child: BlocBuilder<DeleteWorkoutBloc,
+                        MutationState<DeleteWorkout$Mutation>>(
+                      bloc: _deleteWorkoutBloc,
+                      builder: (_, state) {
+                        return state.when(
+                          initial: () => _deleteButton(false),
+                          loading: () => _deleteButton(true),
+                          error: (_, __) => _deleteButton(false),
+                          completed: (data, result) => _deleteButton(false),
                         );
                       },
                     ),
-                    builder: (RunMutation runMutation, QueryResult? result) {
-                      return TextButton(
-                        onPressed: () {
-                          runMutation({'id': workoutId});
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("Delete"),
-                      );
-                    },
                   ),
                 ],
               );
@@ -247,6 +290,65 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
         }
       },
       icon: const Icon(Icons.more_vert),
+    );
+  }
+
+  Widget _workoutInfo(GetWorkoutById$Query? data, QueryResult? result) {
+    if (data == null) {
+      return Container();
+    }
+
+    final workout = data.getWorkoutById;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: Icon(Icons.arrow_back_ios),
+              ),
+              const SizedBox(width: 8.0),
+              if (_editMode)
+                Text(
+                  "Edit workout",
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+              Flexible(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: (() {
+                    if (workout!.userId ==
+                        '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc') {
+                      return _editMode
+                          ? IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.save),
+                            )
+                          : _popupMenu(workout.id);
+                    } else
+                      return Text('');
+                  }()),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16.0),
+        _editMode ? buildEditForm() : _workoutDetails(workout!),
+        if (_editMode)
+          BlockButton(
+            icon: Icons.add,
+            onTap: () {
+              showAddExerciseModal();
+            },
+            label: "ADD EXERCISE",
+          ),
+      ],
     );
   }
 
@@ -262,71 +364,34 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
         }
         return true;
       },
-      child: Query(
-        options: QueryOptions(
-          document: GET_WORKOUT_BY_ID_QUERY_DOCUMENT,
-          variables: <String, dynamic>{'id': widget.workoutId},
-        ),
-        builder: (
-          QueryResult result, {
-          VoidCallback? refetch,
-          FetchMore? fetchMore,
-        }) {
-          GetWorkoutById$Query$GetWorkoutById? workout = result.isNotLoading
-              ? GetWorkoutById$Query$GetWorkoutById.fromJson(
-                  result.data?['getWorkoutById'],
-                )
-              : null;
-          return LoadingOverlay(
-            isLoading: _isLoading,
-            child: Scaffold(
-              backgroundColor:
-                  ThemeProvider.of(context)?.brightness == Brightness.light
-                      ? Colors.white
-                      : Colors.black,
-              body: Container(
-                margin: EdgeInsets.only(top: 48.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: Icon(Icons.arrow_back_ios),
-                          ),
-                          const SizedBox(width: 8.0),
-                          if (_editMode)
-                            Text(
-                              "Edit workout",
-                              style: Theme.of(context).textTheme.headline4,
+      child: LoadingOverlay(
+        isLoading: _isLoading,
+        child: Scaffold(
+          backgroundColor:
+              ThemeProvider.of(context)?.brightness == Brightness.light
+                  ? Colors.white
+                  : Colors.black,
+          body: Container(
+            margin: EdgeInsets.only(top: 48.0),
+            child: BlocBuilder<WorkoutBloc, QueryState<GetWorkoutById$Query>>(
+              bloc: _workoutBloc,
+              builder: (_, state) {
+                return state.when(
+                  initial: () => Container(),
+                  error: (error, __) => Text(parseOperationException(error)),
+                  loading: (_) => Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: Icon(Icons.arrow_back_ios),
                             ),
-                          if (result.isNotLoading)
-                            Flexible(
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: (() {
-                                  if (workout!.userId ==
-                                      '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc') {
-                                    return _editMode
-                                        ? IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(Icons.save),
-                                          )
-                                        : _popupMenu(workout.id);
-                                  } else
-                                    return Text('');
-                                }()),
-                              ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    if (result.isLoading)
                       Container(
                         child: Flexible(
                           child: Center(
@@ -335,24 +400,17 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                             ),
                           ),
                         ),
-                      )
-                    else ...<Widget>[
-                      _editMode ? buildEditForm() : _workoutInfo(workout!),
-                      if (_editMode)
-                        BlockButton(
-                          icon: Icons.add,
-                          onTap: () {
-                            showAddExerciseModal();
-                          },
-                          label: "ADD EXERCISE",
-                        ),
+                      ),
                     ],
-                  ],
-                ),
-              ),
+                  ),
+                  loaded: _workoutInfo,
+                  refetch: _workoutInfo,
+                  fetchMore: _workoutInfo,
+                );
+              },
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
