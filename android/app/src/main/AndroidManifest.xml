@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.workout.workout">
    <application
-        android:label="workout"
+        android:label="Workout"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

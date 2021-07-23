@@ -9,33 +9,34 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:workout/api/schema.dart';
 import 'package:workout/bloc/delete_workout_bloc.dart';
+import 'package:workout/bloc/update_workout_bloc.dart';
 import 'package:workout/bloc/workout_bloc.dart';
+import 'package:workout/screens/workout/workout_form.dart';
 import 'package:workout/utils/graphql_client.dart';
 import 'package:workout/screens/home/workouts.dart';
-import 'package:workout/screens/workout_master_detail/exercise_list.dart';
-import 'package:workout/widgets/block_button.dart';
-import 'exercise_form.dart';
+import 'package:workout/screens/workout/exercise_list.dart';
 
-class WorkoutMasterDetailPage extends StatefulWidget {
+class WorkoutPage extends StatefulWidget {
   static const routeName = "/workout";
   final String? workoutId;
-  final bool newWorkout;
 
-  const WorkoutMasterDetailPage({
+  const WorkoutPage({
     Key? key,
     this.workoutId,
-    required this.newWorkout,
   }) : super(key: key);
 
   @override
-  _WorkoutMasterDetailPageState createState() =>
-      _WorkoutMasterDetailPageState();
+  _WorkoutPageState createState() => _WorkoutPageState();
 }
 
-class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
+class _WorkoutPageState extends State<WorkoutPage> {
   final _formKey = GlobalKey<FormState>();
   late WorkoutBloc _workoutBloc;
   late DeleteWorkoutBloc _deleteWorkoutBloc;
+  late UpdateWorkoutBloc _updateWorkoutBloc;
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  List<WorkoutDetailsMixin$Exercises> _exercises = [];
   bool _editMode = false;
   bool _isLoading = false;
 
@@ -45,49 +46,54 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
     _workoutBloc = WorkoutBloc(client: client)
       ..run(variables: {'id': widget.workoutId});
     _deleteWorkoutBloc = DeleteWorkoutBloc(client: client);
+    _updateWorkoutBloc = UpdateWorkoutBloc(client: client);
   }
 
   @override
   void dispose() {
     _workoutBloc.dispose();
     _deleteWorkoutBloc.dispose();
+    _updateWorkoutBloc.dispose();
     super.dispose();
   }
 
-  Widget buildEditForm() => Form(
-        key: _formKey,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: const InputDecoration(hintText: "Workout name"),
-                validator: (value) {
-                  if (value == null || value.isEmpty)
-                    return "Workout name required.";
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  hintText: "Description (Optional), max. 140 characters.",
-                  hintMaxLines: 2,
+  Widget _editForm(GetWorkoutById$Query$GetWorkoutById workout) {
+    return WorkoutForm(
+      key: _formKey,
+      onSubmitExercise: (WorkoutDetailsMixin$Exercises exercise) {
+        setState(() {
+          _exercises.add(exercise);
+        });
+      },
+      exercises: _exercises,
+      nameController: _nameController,
+      descriptionController: _descriptionController,
+      onExerciseDismissed: (int index) {
+        setState(() {
+          WorkoutDetailsMixin$Exercises deletedExercise =
+              _exercises.removeAt(index);
+          ScaffoldMessenger.of(context)
+            ..removeCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text("Exercise removed"),
+                action: SnackBarAction(
+                  label: "UNDO",
+                  onPressed: () {
+                    setState(() {
+                      _exercises.insert(
+                        index,
+                        deletedExercise,
+                      );
+                    });
+                  },
                 ),
-                maxLines: 3,
               ),
-            ],
-          ),
-        ),
-      );
-
-  Future<dynamic> showAddExerciseModal() => showModalBottomSheet<dynamic>(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) => ExerciseForm(
-          onSubmit: (GetWorkoutById$Query$GetWorkoutById$Exercises exercise) {},
-        ),
-      );
+            );
+        });
+      },
+    );
+  }
 
   Future<dynamic> showShareWorkoutModal(String workoutId) {
     return showModalBottomSheet<dynamic>(
@@ -194,26 +200,7 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
     );
   }
 
-  Widget _popupMenu(
-    String workoutId,
-  ) {
-    Widget _deleteButton(bool loading) {
-      return AbsorbPointer(
-        absorbing: loading,
-        child: TextButton(
-          onPressed: () {
-            _deleteWorkoutBloc
-                .run(DeleteWorkoutArguments(id: workoutId).toJson());
-            setState(() {
-              _isLoading = true;
-            });
-            Navigator.of(context).pop();
-          },
-          child: Text("Delete"),
-        ),
-      );
-    }
-
+  Widget _popupMenu(GetWorkoutById$Query$GetWorkoutById workout) {
     return PopupMenuButton<String>(
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -221,7 +208,18 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
           child: Row(
             children: <Widget>[
               const Icon(Icons.share_outlined),
+              SizedBox(width: 16.0),
               const Text('Share Workout'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: "edit",
+          child: Row(
+            children: <Widget>[
+              const Icon(Icons.edit_outlined),
+              SizedBox(width: 16.0),
+              const Text('Edit Workout'),
             ],
           ),
         ),
@@ -230,15 +228,23 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
           child: Row(
             children: <Widget>[
               const Icon(Icons.delete_outline),
+              SizedBox(width: 16.0),
               const Text('Delete Workout'),
             ],
           ),
         ),
       ],
       onSelected: (value) {
-        if (value == "share") {
-          showShareWorkoutModal(workoutId);
-        } else if (value == "delete") {
+        if (value == "share")
+          showShareWorkoutModal(workout.id);
+        else if (value == "edit")
+          setState(() {
+            _nameController.text = workout.name;
+            _descriptionController.text = workout.description ?? '';
+            _exercises = List.from(workout.exercises ?? []);
+            _editMode = true;
+          });
+        else if (value == "delete") {
           showDialog(
             context: context,
             builder: (BuildContext dialogContext) {
@@ -254,34 +260,13 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                       Navigator.of(context).pop();
                     },
                   ),
-                  BlocListener<DeleteWorkoutBloc,
-                      MutationState<DeleteWorkout$Mutation>>(
-                    bloc: _deleteWorkoutBloc,
-                    listener: (context, state) {
-                      state.maybeWhen(
-                        completed: (_, __) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: const Text('Workout deleted'),
-                          ));
-                          Navigator.of(context, rootNavigator: true).popUntil(
-                            ModalRoute.withName(WorkoutsPage.routeName),
-                          );
-                        },
-                        orElse: () => {},
+                  TextButton(
+                    onPressed: () {
+                      _deleteWorkoutBloc.run(
+                        DeleteWorkoutArguments(id: workout.id).toJson(),
                       );
                     },
-                    child: BlocBuilder<DeleteWorkoutBloc,
-                        MutationState<DeleteWorkout$Mutation>>(
-                      bloc: _deleteWorkoutBloc,
-                      builder: (_, state) {
-                        return state.when(
-                          initial: () => _deleteButton(false),
-                          loading: () => _deleteButton(true),
-                          error: (_, __) => _deleteButton(false),
-                          completed: (data, result) => _deleteButton(false),
-                        );
-                      },
-                    ),
+                    child: Text("Delete"),
                   ),
                 ],
               );
@@ -309,8 +294,8 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back_ios),
+                onPressed: () => Navigator.of(context).maybePop(),
+                icon: Icon(_editMode ? Icons.close : Icons.arrow_back_ios),
               ),
               const SizedBox(width: 8.0),
               if (_editMode)
@@ -326,10 +311,32 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                         '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc') {
                       return _editMode
                           ? IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.save),
+                              onPressed: () {
+                                _updateWorkoutBloc.run(
+                                  UpdateWorkoutArguments(
+                                    workout: WorkoutInput(
+                                      id: workout.id,
+                                      name: _nameController.text,
+                                      userId:
+                                          '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc',
+                                      description: _descriptionController.text,
+                                      exercises: _exercises
+                                          .map(
+                                            (exercise) => ExercisesInput(
+                                              exerciseId: exercise.exerciseId,
+                                              repetitions: exercise.repetitions,
+                                              rest: exercise.rest,
+                                              sets: exercise.sets,
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ).toJson(),
+                                );
+                              },
+                              icon: const Icon(Icons.save),
                             )
-                          : _popupMenu(workout.id);
+                          : _popupMenu(workout);
                     } else
                       return Text('');
                   }()),
@@ -339,15 +346,7 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
           ),
         ),
         const SizedBox(height: 16.0),
-        _editMode ? buildEditForm() : _workoutDetails(workout!),
-        if (_editMode)
-          BlockButton(
-            icon: Icons.add,
-            onTap: () {
-              showAddExerciseModal();
-            },
-            label: "ADD EXERCISE",
-          ),
+        _editMode ? _editForm(workout!) : _workoutDetails(workout!),
       ],
     );
   }
@@ -356,9 +355,9 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_editMode && widget.workoutId != null) {
+        if (_editMode) {
           setState(() {
-            _editMode = true;
+            _editMode = false;
           });
           return false;
         }
@@ -373,41 +372,87 @@ class _WorkoutMasterDetailPageState extends State<WorkoutMasterDetailPage> {
                   : Colors.black,
           body: Container(
             margin: EdgeInsets.only(top: 48.0),
-            child: BlocBuilder<WorkoutBloc, QueryState<GetWorkoutById$Query>>(
-              bloc: _workoutBloc,
-              builder: (_, state) {
-                return state.when(
-                  initial: () => Container(),
-                  error: (error, __) => Text(parseOperationException(error)),
-                  loading: (_) => Column(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: Icon(Icons.arrow_back_ios),
-                            ),
-                          ],
+            child: MultiBlocListener(
+              listeners: [
+                BlocListener<DeleteWorkoutBloc,
+                    MutationState<DeleteWorkout$Mutation>>(
+                  bloc: _deleteWorkoutBloc,
+                  listener: (blocContext, state) {
+                    state.maybeWhen(
+                      completed: (_, __) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text('Workout deleted'),
+                        ));
+                        Navigator.of(context).popUntil(
+                          ModalRoute.withName(WorkoutsPage.routeName),
+                        );
+                      },
+                      loading: () {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      orElse: () => {},
+                    );
+                  },
+                ),
+                BlocListener<UpdateWorkoutBloc,
+                        MutationState<UpdateWorkout$Mutation>>(
+                    bloc: _updateWorkoutBloc,
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        completed: (data, result) {
+                          setState(() {
+                            _isLoading = false;
+                            _editMode = false;
+                          });
+                        },
+                        loading: () {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                        },
+                        orElse: () => {},
+                      );
+                    })
+              ],
+              child: BlocBuilder<WorkoutBloc, QueryState<GetWorkoutById$Query>>(
+                bloc: _workoutBloc,
+                builder: (_, state) {
+                  return state.when(
+                    initial: () => Container(),
+                    error: (error, __) => Text(parseOperationException(error)),
+                    loading: (_) => Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                icon: Icon(Icons.arrow_back_ios),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        child: Flexible(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              semanticsLabel: "Loading workout",
+                        Container(
+                          child: Flexible(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                semanticsLabel: "Loading workout",
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  loaded: _workoutInfo,
-                  refetch: _workoutInfo,
-                  fetchMore: _workoutInfo,
-                );
-              },
+                      ],
+                    ),
+                    loaded: _workoutInfo,
+                    refetch: _workoutInfo,
+                    fetchMore: _workoutInfo,
+                  );
+                },
+              ),
             ),
           ),
         ),

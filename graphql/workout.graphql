@@ -10,39 +10,14 @@ query GetWorkoutsByUserId($userId: String!) {
   }
 }
 
-query GetWorkoutById($id: String!) {
-  getWorkoutById(id: $id) {
-    __typename
-    id
-    userId
-    basedOn {
-      id
-      user {
-        username
-      }
-    }
-    name
-    description
-    muscleGroups
-    exercises {
-      exerciseId
-      sets
-      repetitions
-      rest
-      notes
-      exercise {
-        name
-        muscleGroup {
-          name
-        }
-      }
-    }
-  }
-}
-
 mutation CreateWorkout($workout: WorkoutInput!) {
   createWorkout(workout: $workout) {
     id
+    name
+    muscleGroups
+    exercises {
+      exerciseId
+    }
   }
 }
 

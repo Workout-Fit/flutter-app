@@ -5,7 +5,7 @@ import 'package:workout/presentation/workout_icons.dart';
 import 'package:workout/screens/home/profile.dart';
 import 'package:workout/screens/home/workouts.dart';
 import 'package:workout/screens/scan_qr/index.dart';
-import 'package:workout/screens/workout_master_detail/new_workout.dart';
+import 'package:workout/screens/workout/new_workout.dart';
 
 class HomePage extends StatefulWidget {
   final String routeName;

@@ -1,0 +1,47 @@
+{
+  "id": "a3d1d138-1b6c-4353-aaed-8a87521b93b3",
+  "basedOnId": null,
+  "name": "Workout",
+  "muscleGroups": [
+    "Upper Legs"
+  ],
+  "user": {
+    "id": "9500843d-f7f9-4eb2-ae4d-2208dc57e7dc",
+    "username": "zenes",
+    "email": "frenes"
+  },
+  "description": "GaaG",
+  "basedOn": null,
+  "exercises": [
+    {
+      "exerciseId": "00983dee-c55b-46b4-b7c5-4afcdd090681",
+      "repetitions": 10,
+      "sets": 3,
+      "rest": 30,
+      "exercise": {
+        "id": "00983dee-c55b-46b4-b7c5-4afcdd090681",
+        "name": "Standing Hamstring and Calf Stretch",
+        "equipment": null,
+        "muscleGroup": {
+          "name": "Upper Legs"
+        }
+      }
+    },
+    {
+      "exerciseId": "8852944a-8d6a-4450-a822-ac762e3c3067",
+      "repetitions": 8,
+      "sets": 4,
+      "rest": 20,
+      "exercise": {
+        "id": "02c16b49-99b3-49a2-9a94-fe5132df204b",
+        "name": "Chest and Front of Shoulder Stretch",
+        "equipment": {
+          "name": "Barbell"
+        },
+        "muscleGroup": {
+          "name": "Chest"
+        }
+      }
+    }
+  ]
+}

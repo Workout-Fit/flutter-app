@@ -1,0 +1,39 @@
+fragment WorkoutDetails on Workout {
+  __typename
+    id
+    userId
+    basedOn {
+      id
+      user {
+        username
+      }
+    }
+    name
+    description
+    muscleGroups
+    exercises {
+      exerciseId
+      sets
+      repetitions
+      rest
+      notes
+      exercise {
+        name
+        muscleGroup {
+          name
+        }
+      }
+    }
+}
+
+query GetWorkoutById($id: String!) {
+  getWorkoutById(id: $id) {
+    ...WorkoutDetails
+  }
+}
+
+mutation UpdateWorkout($workout: WorkoutInput!) {
+  updateWorkout(workout: $workout) {
+    ...WorkoutDetails
+  }
+}

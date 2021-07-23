@@ -17,8 +17,8 @@ void main() {
 
     testWidgets('Can receive onTap', (WidgetTester tester) async {
       int timesCalled = 0;
-
       final onTap = () => timesCalled += 1;
+
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -80,6 +80,44 @@ void main() {
       );
 
       expect(find.byIcon(Icons.add), findsOneWidget);
+    });
+
+    testWidgets('Can receive dismissible', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ItemCard(
+            title: '',
+            label: [Icon(Icons.add)],
+            dismissible: true,
+            key: Key('1'),
+          ),
+        ),
+      );
+
+      expect(find.byType(Dismissible), findsOneWidget);
+    });
+
+    testWidgets('Can receive onDismissed', (WidgetTester tester) async {
+      int timesCalled = 0;
+      final onDismissed = (DismissDirection dir) => timesCalled += 1;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ItemCard(
+              title: '',
+              label: [Icon(Icons.add)],
+              dismissible: true,
+              key: Key('1'),
+              onDismissed: onDismissed),
+        ),
+      );
+
+      await tester.drag(find.byType(Dismissible), const Offset(500.0, 0.0));
+
+      await tester.pumpAndSettle();
+      expect(timesCalled, 1);
     });
   });
 }

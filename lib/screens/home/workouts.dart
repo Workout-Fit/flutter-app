@@ -11,8 +11,8 @@ import 'package:workout/api/schema.dart';
 import 'package:workout/bloc/workouts_bloc.dart';
 import 'package:workout/utils/graphql_client.dart';
 import 'package:workout/presentation/workout_icons.dart';
-import 'package:workout/screens/workout_master_detail/workout.dart';
-import 'package:workout/screens/workout_master_detail/workout_master_detail_arguments.dart';
+import 'package:workout/screens/workout/workout.dart';
+import 'package:workout/screens/workout/workout_arguments.dart';
 import 'package:workout/theme/theme.dart';
 import 'package:workout/widgets/item_card.dart';
 
@@ -25,12 +25,12 @@ class WorkoutsPage extends StatefulWidget {
 
 class _WorkoutsPageState extends State<WorkoutsPage> {
   Completer<void> _refreshCompleter = Completer<void>();
-  late WorkoutsBloc workoutsBloc;
+  late WorkoutsBloc _workoutsBloc;
 
   @override
   void initState() {
     super.initState();
-    workoutsBloc = WorkoutsBloc(client: client)
+    _workoutsBloc = WorkoutsBloc(client: client)
       ..run(
         variables: GetWorkoutsByUserIdArguments(
           userId: '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc',
@@ -39,7 +39,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
   }
 
   Future _handleRefreshStart() {
-    workoutsBloc.refetch();
+    _workoutsBloc.refetch();
     return _refreshCompleter.future;
   }
 
@@ -50,7 +50,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
 
   @override
   void dispose() {
-    workoutsBloc.dispose();
+    _workoutsBloc.dispose();
     super.dispose();
   }
 
@@ -73,32 +73,39 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           child: ListView.separated(
             padding: EdgeInsets.only(bottom: 32.0),
             itemCount: workouts?.length ?? 0,
-            separatorBuilder: (BuildContext context, int index) => SizedBox(
-              height: 16.0,
-            ),
-            itemBuilder: (BuildContext context, int index) => ItemCard(
-              label: [
-                Icon(
-                  WorkoutIcons.barbell,
-                  size: 16.0,
-                ),
-                SizedBox(
-                  width: 4,
-                ),
-                Text(
-                  workouts?[index]?.exercises?.length.toString() ?? '0',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ],
-              onTap: () => Navigator.of(context, rootNavigator: true).pushNamed(
-                WorkoutMasterDetailPage.routeName,
-                arguments: WorkoutMasterDetailArguments(
-                  workoutId: workouts?[index]?.id ?? '',
-                ),
-              ),
-              title: workouts?[index]?.name ?? '',
-              subtitle: workouts?[index]?.muscleGroups?.join(", ") ?? '',
-            ),
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(height: 16.0);
+            },
+            itemBuilder: (BuildContext context, int index) {
+              return ItemCard(
+                label: [
+                  Icon(WorkoutIcons.barbell, size: 16.0),
+                  SizedBox(width: 4),
+                  Text(
+                    workouts?[index]?.exercises?.length.toString() ?? '0',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ],
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true)
+                      .pushNamed(
+                    WorkoutPage.routeName,
+                    arguments: WorkoutArguments(
+                      workoutId: workouts?[index]?.id ?? '',
+                    ),
+                  )
+                      .then((value) {
+                    _workoutsBloc.run(
+                      variables: GetWorkoutsByUserIdArguments(
+                        userId: '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc',
+                      ).toJson(),
+                    );
+                  });
+                },
+                title: workouts?[index]?.name ?? '',
+                subtitle: workouts?[index]?.muscleGroups?.join(", ") ?? '',
+              );
+            },
           ),
         ),
       );
@@ -121,23 +128,25 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                     style: Theme.of(context).textTheme.headline4,
                   ),
                   ThemeSwitcher(
-                    builder: (context) => IconButton(
-                      icon: Icon(
-                        ThemeProvider.of(context)!.brightness ==
-                                Brightness.light
-                            ? Icons.dark_mode_outlined
-                            : Icons.dark_mode,
-                      ),
-                      onPressed: () {
-                        ThemeSwitcher.of(context)?.changeTheme(
-                          theme: ThemeProvider.of(context)?.brightness ==
+                    builder: (context) {
+                      return IconButton(
+                        icon: Icon(
+                          ThemeProvider.of(context)!.brightness ==
                                   Brightness.light
-                              ? darkTheme
-                              : lightTheme,
-                        );
-                      },
-                    ),
-                  )
+                              ? Icons.dark_mode_outlined
+                              : Icons.dark_mode,
+                        ),
+                        onPressed: () {
+                          ThemeSwitcher.of(context)?.changeTheme(
+                            theme: ThemeProvider.of(context)?.brightness ==
+                                    Brightness.light
+                                ? darkTheme
+                                : lightTheme,
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -164,7 +173,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
               height: 16.0,
             ),
             BlocBuilder<WorkoutsBloc, QueryState<GetWorkoutsByUserId$Query>>(
-              bloc: workoutsBloc,
+              bloc: _workoutsBloc,
               builder: (_, state) {
                 if (state is! QueryStateRefetch) {
                   _handleRefreshEnd();

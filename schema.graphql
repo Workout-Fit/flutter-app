@@ -49,6 +49,7 @@ type Mutation {
   copyWorkoutById(id: String!, userId: String!): Workout
   createWorkout(workout: WorkoutInput!): Workout
   deleteWorkout(id: String!): Workout
+  updateWorkout(workout: WorkoutInput!): Workout
 }
 
 type ProfileInfo {
@@ -127,6 +128,7 @@ input WorkoutInput {
   basedOnId: String
   description: String
   exercises: [ExercisesInput]
+  id: String
   name: String!
   userId: String!
 }

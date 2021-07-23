@@ -11,6 +11,7 @@ class WorkoutsBloc extends QueryBloc<GetWorkoutsByUserId$Query> {
           options: options ??
               WatchQueryOptions(
                 document: GET_WORKOUTS_BY_USER_ID_QUERY_DOCUMENT,
+                fetchPolicy: FetchPolicy.cacheAndNetwork,
               ),
         );
 

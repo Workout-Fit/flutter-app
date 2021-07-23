@@ -6,7 +6,7 @@ import 'package:workout/api/schema.dart';
 import 'package:workout/utils/graphql_client.dart';
 
 class ExerciseForm extends StatefulWidget {
-  final void Function(GetWorkoutById$Query$GetWorkoutById$Exercises) onSubmit;
+  final void Function(WorkoutDetailsMixin$Exercises) onSubmit;
 
   const ExerciseForm({Key? key, required this.onSubmit}) : super(key: key);
 
@@ -165,17 +165,14 @@ class _ExerciseFormState extends State<ExerciseForm> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         widget.onSubmit(
-                          GetWorkoutById$Query$GetWorkoutById$Exercises
-                              .fromJson(
-                            {
-                              'exerciseId': _selectedExercise!.id,
-                              'repetitions':
-                                  int.parse(_repetitionsController.text),
-                              'rest': int.parse(_breakController.text),
-                              'sets': int.parse(_setsController.text),
-                              'exercise': _selectedExercise!.toJson(),
-                            },
-                          ),
+                          WorkoutDetailsMixin$Exercises.fromJson({
+                            'exerciseId': _selectedExercise!.id,
+                            'repetitions':
+                                int.parse(_repetitionsController.text),
+                            'rest': int.parse(_breakController.text),
+                            'sets': int.parse(_setsController.text),
+                            'exercise': _selectedExercise!.toJson(),
+                          }),
                         );
                       }
                     },
