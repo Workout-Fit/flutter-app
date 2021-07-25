@@ -49,14 +49,18 @@ class Main extends StatelessWidget {
                   title: 'Workout',
                   theme: currentTheme,
                   home: (() {
+                    late Widget page;
                     switch (state.status) {
                       case AuthenticationStatus.unauthenticated:
-                        return LoginPage(
+                        page = LoginPage(
                           authenticationRepository: authenticationRepository,
                         );
+                        break;
                       case AuthenticationStatus.authenticated:
-                        return App();
+                        page = App();
+                        break;
                     }
+                    MaterialPageRoute(builder: (context) => page);
                   }()),
                 );
               },

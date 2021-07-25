@@ -1,97 +1,15 @@
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
 import 'package:meta/meta.dart';
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:workout/models/User.dart';
 import 'package:workout/repos/authentication_repository.dart';
 import 'package:flutter/material.dart';
 
-@immutable
-abstract class LoginState extends Equatable {}
+part 'login_event.dart';
 
-class InitialLoginState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-class OtpSentState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-class LoadingState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-class OtpVerifiedState extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-@immutable
-class LoginCompleteState extends LoginState {
-  final User user;
-  LoginCompleteState(this.user);
-
-  @override
-  List<Object> get props => [user];
-}
-
-class ExceptionState extends LoginState {
-  final String message;
-
-  ExceptionState({required this.message});
-
-  @override
-  List<Object> get props => [message];
-}
-
-class OtpExceptionState extends LoginState {
-  final String message;
-
-  OtpExceptionState({required this.message});
-
-  @override
-  List<Object> get props => [message];
-}
-
-class LoginEvent extends Equatable {
-  @override
-  List<Object> get props => [];
-}
-
-@immutable
-class SendOtpEvent extends LoginEvent {
-  final String phoneNumber;
-
-  SendOtpEvent({required this.phoneNumber});
-}
-
-class AppStartEvent extends LoginEvent {}
-
-@immutable
-class VerifyOtpEvent extends LoginEvent {
-  final String otp;
-
-  VerifyOtpEvent({required this.otp});
-}
-
-class LogoutEvent extends LoginEvent {}
-
-class OtpSendEvent extends LoginEvent {}
-
-class LoginCompleteEvent extends LoginEvent {
-  final User user;
-  LoginCompleteEvent(this.user);
-}
-
-@immutable
-class LoginExceptionEvent extends LoginEvent {
-  final String message;
-
-  LoginExceptionEvent(this.message);
-}
+part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthenticationRepository _authenticationRepository;
@@ -122,10 +40,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else if (event is VerifyOtpEvent) {
       yield LoadingState();
       try {
-        UserCredential result =
+        firebaseAuth.UserCredential result =
             await _authenticationRepository.verifyAndLogin(verID, event.otp);
         if (result.user != null) {
-          yield LoginCompleteState(result.user!);
+          yield (result.additionalUserInfo?.isNewUser ?? false)
+              ? SignUpState(result.user!.toUser)
+              : LoginCompleteState(result.user!.toUser);
         } else {
           yield OtpExceptionState(message: "Invalid otp!");
         }
@@ -133,6 +53,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         yield OtpExceptionState(message: "Invalid otp!");
         print(e);
       }
+    } else if (event is LogoutEvent) {
+      await _authenticationRepository.logOut();
     }
   }
 
@@ -153,18 +75,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     super.close();
   }
 
+  Stream<LoginEvent> signUp() async* {
+    // TODO: Create signUp login event
+    // StreamController<LoginEvent> eventStream = StreamController();
+  }
+
   Stream<LoginEvent> sendOtp(String phoneNumber) async* {
     StreamController<LoginEvent> eventStream = StreamController();
-    final phoneVerificationCompleted = (AuthCredential authCredential) {
-      _authenticationRepository.currentUser;
-      _authenticationRepository.currentUser.catchError((onError) {
-        print(onError);
-      }).then((user) {
-        eventStream.add(LoginCompleteEvent(user));
-        eventStream.close();
-      });
+    final phoneVerificationCompleted =
+        (firebaseAuth.AuthCredential authCredential) {
+      eventStream
+          .add(LoginCompleteEvent(_authenticationRepository.currentUser));
+      eventStream.close();
     };
-    final phoneVerificationFailed = (FirebaseAuthException authException) {
+    final phoneVerificationFailed =
+        (firebaseAuth.FirebaseAuthException authException) {
       print(authException.message);
       eventStream.add(LoginExceptionEvent(onError.toString()));
       eventStream.close();
@@ -189,5 +114,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     yield* eventStream.stream;
+  }
+}
+
+extension on firebaseAuth.User {
+  User get toUser {
+    return User(id: uid, email: email, phoneNumber: phoneNumber);
   }
 }

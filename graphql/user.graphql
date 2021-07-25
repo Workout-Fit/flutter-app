@@ -1,0 +1,19 @@
+mutation createUser($userId: String!, $profileInfo: ProfileInfoInput!) {
+    createUser(userId: $userId, profileInfo: $profileInfo) {
+        id
+    }
+}
+
+query getUserById($id: String!) {
+    getUserById(id: $id) {
+        id
+        profileInfo {
+            username
+            name
+            height
+            weight
+            profilePicture
+            bio
+        }
+    }
+}

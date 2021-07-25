@@ -14,7 +14,7 @@ class AuthenticationBloc
       {required AuthenticationRepository authenticationRepository})
       : _authenticationRepository = authenticationRepository,
         super(
-          authenticationRepository.currentUser.isNotEmpty
+          authenticationRepository.currentUser.isEmpty
               ? AuthenticationState.authenticated(
                   authenticationRepository.currentUser)
               : const AuthenticationState.unauthenticated(),

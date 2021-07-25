@@ -20,64 +20,6 @@ mixin WorkoutDetailsMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class SearchExercises$Query$GetExercises$MuscleGroup extends JsonSerializable
-    with EquatableMixin {
-  SearchExercises$Query$GetExercises$MuscleGroup();
-
-  factory SearchExercises$Query$GetExercises$MuscleGroup.fromJson(
-          Map<String, dynamic> json) =>
-      _$SearchExercises$Query$GetExercises$MuscleGroupFromJson(json);
-
-  late String name;
-
-  @override
-  List<Object?> get props => [name];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$SearchExercises$Query$GetExercises$MuscleGroupToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class SearchExercises$Query$GetExercises extends JsonSerializable
-    with EquatableMixin {
-  SearchExercises$Query$GetExercises();
-
-  factory SearchExercises$Query$GetExercises.fromJson(
-          Map<String, dynamic> json) =>
-      _$SearchExercises$Query$GetExercisesFromJson(json);
-
-  @JsonKey(name: '__typename')
-  String? $$typename;
-
-  late String id;
-
-  String? name;
-
-  SearchExercises$Query$GetExercises$MuscleGroup? muscleGroup;
-
-  @override
-  List<Object?> get props => [$$typename, id, name, muscleGroup];
-  @override
-  Map<String, dynamic> toJson() =>
-      _$SearchExercises$Query$GetExercisesToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
-class SearchExercises$Query extends JsonSerializable with EquatableMixin {
-  SearchExercises$Query();
-
-  factory SearchExercises$Query.fromJson(Map<String, dynamic> json) =>
-      _$SearchExercises$QueryFromJson(json);
-
-  List<SearchExercises$Query$GetExercises?>? getExercises;
-
-  @override
-  List<Object?> get props => [getExercises];
-  @override
-  Map<String, dynamic> toJson() => _$SearchExercises$QueryToJson(this);
-}
-
-@JsonSerializable(explicitToJson: true)
 class GetWorkoutsByUserId$Query$GetWorkoutsByUserId$Exercises
     extends JsonSerializable with EquatableMixin {
   GetWorkoutsByUserId$Query$GetWorkoutsByUserId$Exercises();
@@ -470,98 +412,186 @@ class UpdateWorkout$Mutation extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class SearchExercisesArguments extends JsonSerializable with EquatableMixin {
-  SearchExercisesArguments({this.exerciseName});
+class SearchExercises$Query$GetExercises$MuscleGroup extends JsonSerializable
+    with EquatableMixin {
+  SearchExercises$Query$GetExercises$MuscleGroup();
+
+  factory SearchExercises$Query$GetExercises$MuscleGroup.fromJson(
+          Map<String, dynamic> json) =>
+      _$SearchExercises$Query$GetExercises$MuscleGroupFromJson(json);
+
+  late String name;
 
   @override
-  factory SearchExercisesArguments.fromJson(Map<String, dynamic> json) =>
-      _$SearchExercisesArgumentsFromJson(json);
-
-  final String? exerciseName;
-
+  List<Object?> get props => [name];
   @override
-  List<Object?> get props => [exerciseName];
-  @override
-  Map<String, dynamic> toJson() => _$SearchExercisesArgumentsToJson(this);
+  Map<String, dynamic> toJson() =>
+      _$SearchExercises$Query$GetExercises$MuscleGroupToJson(this);
 }
 
-final SEARCH_EXERCISES_QUERY_DOCUMENT = DocumentNode(definitions: [
-  OperationDefinitionNode(
-      type: OperationType.query,
-      name: NameNode(value: 'SearchExercises'),
-      variableDefinitions: [
-        VariableDefinitionNode(
-            variable: VariableNode(name: NameNode(value: 'exerciseName')),
-            type: NamedTypeNode(
-                name: NameNode(value: 'String'), isNonNull: false),
-            defaultValue: DefaultValueNode(value: null),
-            directives: [])
-      ],
-      directives: [],
-      selectionSet: SelectionSetNode(selections: [
-        FieldNode(
-            name: NameNode(value: 'getExercises'),
-            alias: null,
-            arguments: [
-              ArgumentNode(
-                  name: NameNode(value: 'name'),
-                  value: VariableNode(name: NameNode(value: 'exerciseName')))
-            ],
-            directives: [],
-            selectionSet: SelectionSetNode(selections: [
-              FieldNode(
-                  name: NameNode(value: '__typename'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'id'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'name'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: null),
-              FieldNode(
-                  name: NameNode(value: 'muscleGroup'),
-                  alias: null,
-                  arguments: [],
-                  directives: [],
-                  selectionSet: SelectionSetNode(selections: [
-                    FieldNode(
-                        name: NameNode(value: 'name'),
-                        alias: null,
-                        arguments: [],
-                        directives: [],
-                        selectionSet: null)
-                  ]))
-            ]))
-      ]))
-]);
+@JsonSerializable(explicitToJson: true)
+class SearchExercises$Query$GetExercises extends JsonSerializable
+    with EquatableMixin {
+  SearchExercises$Query$GetExercises();
 
-class SearchExercisesQuery
-    extends GraphQLQuery<SearchExercises$Query, SearchExercisesArguments> {
-  SearchExercisesQuery({required this.variables});
+  factory SearchExercises$Query$GetExercises.fromJson(
+          Map<String, dynamic> json) =>
+      _$SearchExercises$Query$GetExercisesFromJson(json);
+
+  @JsonKey(name: '__typename')
+  String? $$typename;
+
+  late String id;
+
+  String? name;
+
+  SearchExercises$Query$GetExercises$MuscleGroup? muscleGroup;
 
   @override
-  final DocumentNode document = SEARCH_EXERCISES_QUERY_DOCUMENT;
+  List<Object?> get props => [$$typename, id, name, muscleGroup];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$SearchExercises$Query$GetExercisesToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class SearchExercises$Query extends JsonSerializable with EquatableMixin {
+  SearchExercises$Query();
+
+  factory SearchExercises$Query.fromJson(Map<String, dynamic> json) =>
+      _$SearchExercises$QueryFromJson(json);
+
+  List<SearchExercises$Query$GetExercises?>? getExercises;
 
   @override
-  final String operationName = 'SearchExercises';
+  List<Object?> get props => [getExercises];
+  @override
+  Map<String, dynamic> toJson() => _$SearchExercises$QueryToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateUser$Mutation$CreateUser extends JsonSerializable
+    with EquatableMixin {
+  CreateUser$Mutation$CreateUser();
+
+  factory CreateUser$Mutation$CreateUser.fromJson(Map<String, dynamic> json) =>
+      _$CreateUser$Mutation$CreateUserFromJson(json);
+
+  late String id;
 
   @override
-  final SearchExercisesArguments variables;
+  List<Object?> get props => [id];
+  @override
+  Map<String, dynamic> toJson() => _$CreateUser$Mutation$CreateUserToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateUser$Mutation extends JsonSerializable with EquatableMixin {
+  CreateUser$Mutation();
+
+  factory CreateUser$Mutation.fromJson(Map<String, dynamic> json) =>
+      _$CreateUser$MutationFromJson(json);
+
+  CreateUser$Mutation$CreateUser? createUser;
 
   @override
-  List<Object?> get props => [document, operationName, variables];
+  List<Object?> get props => [createUser];
   @override
-  SearchExercises$Query parse(Map<String, dynamic> json) =>
-      SearchExercises$Query.fromJson(json);
+  Map<String, dynamic> toJson() => _$CreateUser$MutationToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProfileInfoInput extends JsonSerializable with EquatableMixin {
+  ProfileInfoInput(
+      {this.bio,
+      this.height,
+      required this.name,
+      this.profilePicture,
+      required this.username,
+      this.weight});
+
+  factory ProfileInfoInput.fromJson(Map<String, dynamic> json) =>
+      _$ProfileInfoInputFromJson(json);
+
+  String? bio;
+
+  double? height;
+
+  late String name;
+
+  String? profilePicture;
+
+  late String username;
+
+  double? weight;
+
+  @override
+  List<Object?> get props =>
+      [bio, height, name, profilePicture, username, weight];
+  @override
+  Map<String, dynamic> toJson() => _$ProfileInfoInputToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class GetUserById$Query$GetUserById$ProfileInfo extends JsonSerializable
+    with EquatableMixin {
+  GetUserById$Query$GetUserById$ProfileInfo();
+
+  factory GetUserById$Query$GetUserById$ProfileInfo.fromJson(
+          Map<String, dynamic> json) =>
+      _$GetUserById$Query$GetUserById$ProfileInfoFromJson(json);
+
+  String? username;
+
+  String? name;
+
+  double? height;
+
+  double? weight;
+
+  String? profilePicture;
+
+  String? bio;
+
+  @override
+  List<Object?> get props =>
+      [username, name, height, weight, profilePicture, bio];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$GetUserById$Query$GetUserById$ProfileInfoToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class GetUserById$Query$GetUserById extends JsonSerializable
+    with EquatableMixin {
+  GetUserById$Query$GetUserById();
+
+  factory GetUserById$Query$GetUserById.fromJson(Map<String, dynamic> json) =>
+      _$GetUserById$Query$GetUserByIdFromJson(json);
+
+  late String id;
+
+  GetUserById$Query$GetUserById$ProfileInfo? profileInfo;
+
+  @override
+  List<Object?> get props => [id, profileInfo];
+  @override
+  Map<String, dynamic> toJson() => _$GetUserById$Query$GetUserByIdToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class GetUserById$Query extends JsonSerializable with EquatableMixin {
+  GetUserById$Query();
+
+  factory GetUserById$Query.fromJson(Map<String, dynamic> json) =>
+      _$GetUserById$QueryFromJson(json);
+
+  GetUserById$Query$GetUserById? getUserById;
+
+  @override
+  List<Object?> get props => [getUserById];
+  @override
+  Map<String, dynamic> toJson() => _$GetUserById$QueryToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -1233,4 +1263,293 @@ class UpdateWorkoutMutation
   @override
   UpdateWorkout$Mutation parse(Map<String, dynamic> json) =>
       UpdateWorkout$Mutation.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class SearchExercisesArguments extends JsonSerializable with EquatableMixin {
+  SearchExercisesArguments({this.exerciseName});
+
+  @override
+  factory SearchExercisesArguments.fromJson(Map<String, dynamic> json) =>
+      _$SearchExercisesArgumentsFromJson(json);
+
+  final String? exerciseName;
+
+  @override
+  List<Object?> get props => [exerciseName];
+  @override
+  Map<String, dynamic> toJson() => _$SearchExercisesArgumentsToJson(this);
+}
+
+final SEARCH_EXERCISES_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'SearchExercises'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'exerciseName')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'String'), isNonNull: false),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'getExercises'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'name'),
+                  value: VariableNode(name: NameNode(value: 'exerciseName')))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: '__typename'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'name'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'muscleGroup'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'name'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ]))
+            ]))
+      ]))
+]);
+
+class SearchExercisesQuery
+    extends GraphQLQuery<SearchExercises$Query, SearchExercisesArguments> {
+  SearchExercisesQuery({required this.variables});
+
+  @override
+  final DocumentNode document = SEARCH_EXERCISES_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = 'SearchExercises';
+
+  @override
+  final SearchExercisesArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  SearchExercises$Query parse(Map<String, dynamic> json) =>
+      SearchExercises$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateUserArguments extends JsonSerializable with EquatableMixin {
+  CreateUserArguments({required this.userId, required this.profileInfo});
+
+  @override
+  factory CreateUserArguments.fromJson(Map<String, dynamic> json) =>
+      _$CreateUserArgumentsFromJson(json);
+
+  late String userId;
+
+  late ProfileInfoInput profileInfo;
+
+  @override
+  List<Object?> get props => [userId, profileInfo];
+  @override
+  Map<String, dynamic> toJson() => _$CreateUserArgumentsToJson(this);
+}
+
+final CREATE_USER_MUTATION_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'createUser'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'userId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'profileInfo')),
+            type: NamedTypeNode(
+                name: NameNode(value: 'ProfileInfoInput'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'createUser'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'userId'),
+                  value: VariableNode(name: NameNode(value: 'userId'))),
+              ArgumentNode(
+                  name: NameNode(value: 'profileInfo'),
+                  value: VariableNode(name: NameNode(value: 'profileInfo')))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null)
+            ]))
+      ]))
+]);
+
+class CreateUserMutation
+    extends GraphQLQuery<CreateUser$Mutation, CreateUserArguments> {
+  CreateUserMutation({required this.variables});
+
+  @override
+  final DocumentNode document = CREATE_USER_MUTATION_DOCUMENT;
+
+  @override
+  final String operationName = 'createUser';
+
+  @override
+  final CreateUserArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  CreateUser$Mutation parse(Map<String, dynamic> json) =>
+      CreateUser$Mutation.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class GetUserByIdArguments extends JsonSerializable with EquatableMixin {
+  GetUserByIdArguments({required this.id});
+
+  @override
+  factory GetUserByIdArguments.fromJson(Map<String, dynamic> json) =>
+      _$GetUserByIdArgumentsFromJson(json);
+
+  late String id;
+
+  @override
+  List<Object?> get props => [id];
+  @override
+  Map<String, dynamic> toJson() => _$GetUserByIdArgumentsToJson(this);
+}
+
+final GET_USER_BY_ID_QUERY_DOCUMENT = DocumentNode(definitions: [
+  OperationDefinitionNode(
+      type: OperationType.query,
+      name: NameNode(value: 'getUserById'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'id')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'getUserById'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'id'),
+                  value: VariableNode(name: NameNode(value: 'id')))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'profileInfo'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'username'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'name'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'height'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'weight'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'profilePicture'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'bio'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ]))
+            ]))
+      ]))
+]);
+
+class GetUserByIdQuery
+    extends GraphQLQuery<GetUserById$Query, GetUserByIdArguments> {
+  GetUserByIdQuery({required this.variables});
+
+  @override
+  final DocumentNode document = GET_USER_BY_ID_QUERY_DOCUMENT;
+
+  @override
+  final String operationName = 'getUserById';
+
+  @override
+  final GetUserByIdArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  GetUserById$Query parse(Map<String, dynamic> json) =>
+      GetUserById$Query.fromJson(json);
 }

@@ -12,6 +12,7 @@ class LogOutFailure implements Exception {}
 class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
 
+
   AuthenticationRepository({
     firebase_auth.FirebaseAuth? firebaseAuth,
   }) : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance;
@@ -58,6 +59,10 @@ class AuthenticationRepository {
     });
   }
 
+  Future<void> signUp() async {
+    // TODO: Add createUser mutation.
+  }
+
   Future<void> logOut() async {
     try {
       return _firebaseAuth.signOut();
@@ -66,7 +71,7 @@ class AuthenticationRepository {
     }
   }
 
-  get currentUser => _firebaseAuth.currentUser ?? User.empty;
+  User get currentUser => _firebaseAuth.currentUser?.toUser ?? User.empty;
 }
 
 extension on firebase_auth.User {
