@@ -23,15 +23,19 @@ class OtpFormState extends State<OtpForm> {
             appContext: context,
             length: 6,
             pinTheme: PinTheme(
-              shape: PinCodeFieldShape.box,
-              borderRadius: BorderRadius.circular(10.0),
+              selectedFillColor:
+                  Theme.of(context).inputDecorationTheme.fillColor,
               errorBorderColor:
                   Theme.of(context).inputDecorationTheme.fillColor,
               activeColor: Theme.of(context).inputDecorationTheme.fillColor,
               activeFillColor: Theme.of(context).inputDecorationTheme.fillColor,
+              selectedColor: Theme.of(context).inputDecorationTheme.fillColor,
               fieldHeight: 50,
               fieldWidth: 45,
             ),
+            animationType: AnimationType.none,
+            keyboardType: TextInputType.number,
+            backgroundColor: Colors.transparent,
             controller: _pinController,
             onChanged: (String value) {},
           ),

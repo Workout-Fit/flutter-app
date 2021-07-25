@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: BlocProvider<LoginBloc>(
         create: (context) => _loginBloc,
-        child: Scaffold(body: LoginForm()),
+        child: LoginForm(),
       ),
     );
   }
