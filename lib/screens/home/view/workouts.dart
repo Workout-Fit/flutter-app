@@ -8,11 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
 import 'package:graphql/client.dart';
 import 'package:workout/api/schema.dart';
-import 'package:workout/bloc/workouts_bloc.dart';
+import 'package:workout/app/bloc/authentication_bloc.dart';
+import 'package:workout/screens/home/bloc/get_workouts_bloc.dart';
 import 'package:workout/utils/graphql_client.dart';
 import 'package:workout/presentation/workout_icons.dart';
 import 'package:workout/screens/workout/workout.dart';
-import 'package:workout/screens/workout/workout_arguments.dart';
 import 'package:workout/theme/theme.dart';
 import 'package:workout/widgets/item_card.dart';
 
@@ -33,7 +33,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     _workoutsBloc = WorkoutsBloc(client: client)
       ..run(
         variables: GetWorkoutsByUserIdArguments(
-          userId: '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc',
+          userId: BlocProvider.of<AuthenticationBloc>(context).state.user.id,
         ).toJson(),
       );
   }
@@ -97,7 +97,9 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                       .then((value) {
                     _workoutsBloc.run(
                       variables: GetWorkoutsByUserIdArguments(
-                        userId: '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc',
+                        userId: BlocProvider.of<AuthenticationBloc>(
+                          context,
+                        ).state.user.id,
                       ).toJson(),
                     );
                   });
@@ -119,7 +121,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -152,7 +154,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
             ),
             SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

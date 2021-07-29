@@ -10,6 +10,9 @@ class SendOtpEvent extends LoginEvent {
   final String phoneNumber;
 
   SendOtpEvent({required this.phoneNumber});
+
+  @override
+  List<Object> get props => [phoneNumber];
 }
 
 @immutable
@@ -17,11 +20,14 @@ class VerifyOtpEvent extends LoginEvent {
   final String otp;
 
   VerifyOtpEvent({required this.otp});
+
+  @override
+  List<Object> get props => [otp];
 }
 
 class LogoutEvent extends LoginEvent {}
 
-class OtpSendEvent extends LoginEvent {}
+class OtpSentEvent extends LoginEvent {}
 
 class LoginCompleteEvent extends LoginEvent {
   final User user;
@@ -30,9 +36,24 @@ class LoginCompleteEvent extends LoginEvent {
 }
 
 class SignUpEvent extends LoginEvent {
-  final User user;
+  final String username;
+  final String name;
 
-  SignUpEvent(this.user);
+  SignUpEvent(this.username, this.name);
+}
+
+class SignUpExceptionEvent extends LoginEvent {
+  final String message;
+
+  SignUpExceptionEvent(this.message);
+}
+
+@immutable
+class SignUpCompleteEvent extends LoginEvent {
+  final User user;
+  final ProfileInfoMixin$ProfileInfo profileInfo;
+
+  SignUpCompleteEvent(this.user, this.profileInfo);
 }
 
 @immutable

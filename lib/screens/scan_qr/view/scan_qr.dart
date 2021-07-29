@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:workout/utils/regex.dart';
 import 'package:workout/screens/workout/workout.dart';
-import 'package:workout/screens/workout/workout_arguments.dart';
 
 class ScanQRPage extends StatefulWidget {
   static const routeName = "/qr-scan";
@@ -40,14 +39,17 @@ class _ScanQRPageState extends State<ScanQRPage> {
       if (workoutURLRegEx.hasMatch(scanData.code)) {
         controller.pauseCamera();
         HapticFeedback.mediumImpact();
-        Navigator.of(context)
-            .pushNamed(
-              WorkoutPage.routeName,
-              arguments: WorkoutArguments(
-                workoutId: workoutURLRegEx.firstMatch(scanData.code)?.group(1),
-              ),
-            )
-            .then((value) => controller.resumeCamera());
+        if (workoutURLRegEx.hasMatch(scanData.code)) {
+          Navigator.of(context)
+              .pushNamed(
+                WorkoutPage.routeName,
+                arguments: WorkoutArguments(
+                  workoutId:
+                      workoutURLRegEx.firstMatch(scanData.code)!.group(1)!,
+                ),
+              )
+              .then((value) => controller.resumeCamera());
+        }
       }
     });
   }

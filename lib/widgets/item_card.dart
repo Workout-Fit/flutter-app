@@ -13,7 +13,7 @@ class ItemCard extends StatelessWidget {
     Key? key,
     this.onTap,
     required this.title,
-    this.margin = const EdgeInsets.symmetric(horizontal: 16.0),
+    this.margin = const EdgeInsets.symmetric(horizontal: 24.0),
     this.subtitle = "",
     this.label = const [],
     this.dismissible = false,
@@ -42,7 +42,7 @@ class ItemCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
           onTap: onTap,
           child: Ink(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

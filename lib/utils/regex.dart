@@ -3,3 +3,9 @@ final RegExp workoutURLRegEx = new RegExp(
   caseSensitive: false,
   multiLine: false,
 );
+
+final RegExp usernameRegEx = new RegExp(
+  r"^[\w\d]+$",
+  caseSensitive: false,
+  multiLine: false,
+);

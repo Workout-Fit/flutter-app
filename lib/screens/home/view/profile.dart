@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:workout/bloc/authentication/authentication_bloc.dart';
+import 'package:workout/app/bloc/authentication_bloc.dart';
+import 'package:workout/screens/login/login.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = "/profile";
@@ -20,6 +21,10 @@ class _ProfilePageState extends State<ProfilePage> {
               BlocProvider.of<AuthenticationBloc>(context).add(
                 AuthenticationLogoutRequested(),
               );
+              Navigator.of(
+                context,
+                rootNavigator: true,
+              ).pushNamedAndRemoveUntil(LoginPage.routeName, (route) => false);
             },
             icon: Icon(Icons.exit_to_app),
           ),

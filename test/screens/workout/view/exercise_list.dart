@@ -4,7 +4,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:workout/api/schema.graphql.dart';
-import 'package:workout/screens/workout/exercise_list.dart';
+import 'package:workout/screens/workout/view/exercise_list.dart';
 import 'package:workout/widgets/item_card.dart';
 import 'package:flutter/services.dart';
 

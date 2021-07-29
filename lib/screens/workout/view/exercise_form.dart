@@ -46,7 +46,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
           child: Form(
             key: _formKey,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+              padding: EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -56,7 +56,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
                   ),
                   const SizedBox(height: 24.0),
                   DropdownSearch<SearchExercises$Query$GetExercises>(
-                    hint: "Search Exercise",
+                    hint: "Search Exercise (required)",
                     validator: (v) => v == null ? "Select an exercise." : null,
                     popupShape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -126,7 +126,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
                               ? "Sets required"
                               : null,
                           decoration: const InputDecoration(
-                            hintText: "Sets",
+                            hintText: "Sets (required)",
                           ),
                         ),
                       ),
@@ -142,7 +142,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
                               ? "Repetitions required"
                               : null,
                           decoration: const InputDecoration(
-                            hintText: "Repetitions",
+                            hintText: "Repetitions (required)",
                           ),
                         ),
                       ),
@@ -157,7 +157,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
                         ? "Break time required"
                         : null,
                     decoration: const InputDecoration(
-                      hintText: "Break (In seconds)",
+                      hintText: "Break time (required)",
                     ),
                   ),
                   const SizedBox(height: 40.0),

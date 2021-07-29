@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:workout/api/schema.dart';
-import 'package:workout/bloc/create_workout_bloc.dart';
-import 'package:workout/screens/home/workouts.dart';
+import 'package:workout/app/bloc/authentication_bloc.dart';
+import 'package:workout/screens/home/view/workouts.dart';
+import 'package:workout/screens/workout/bloc/create_workout_bloc.dart';
 import 'package:workout/screens/workout/workout.dart';
-import 'package:workout/screens/workout/workout_arguments.dart';
-import 'package:workout/screens/workout/workout_form.dart';
+import 'package:workout/screens/workout/view/workout_form.dart';
 import 'package:workout/utils/graphql_client.dart';
 
 class NewWorkoutPage extends StatefulWidget {
@@ -106,26 +106,25 @@ class _NewWorkoutPageState extends State<NewWorkoutPage> {
                           child: IconButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                _createWorkoutBloc.run(
-                                  CreateWorkoutArguments(
-                                    workout: WorkoutInput(
-                                      name: _nameController.text,
-                                      userId:
-                                          '9500843d-f7f9-4eb2-ae4d-2208dc57e7dc',
-                                      description: _descriptionController.text,
-                                      exercises: _exercises
-                                          .map(
-                                            (exercise) => ExercisesInput(
-                                              exerciseId: exercise.exerciseId,
-                                              repetitions: exercise.repetitions,
-                                              rest: exercise.rest,
-                                              sets: exercise.sets,
-                                            ),
-                                          )
-                                          .toList(),
-                                    ),
-                                  ).toJson(),
-                                );
+                                _createWorkoutBloc.run(CreateWorkoutArguments(
+                                  workout: WorkoutInput(
+                                    name: _nameController.text,
+                                    userId: BlocProvider.of<AuthenticationBloc>(
+                                      context,
+                                    ).state.user.id,
+                                    description: _descriptionController.text,
+                                    exercises: _exercises
+                                        .map(
+                                          (exercise) => ExercisesInput(
+                                            exerciseId: exercise.exerciseId,
+                                            repetitions: exercise.repetitions,
+                                            rest: exercise.rest,
+                                            sets: exercise.sets,
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                ).toJson());
                               }
                             },
                             icon: const Icon(Icons.save),

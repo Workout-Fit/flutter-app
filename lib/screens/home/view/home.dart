@@ -2,15 +2,17 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:workout/presentation/workout_icons.dart';
-import 'package:workout/screens/home/profile.dart';
-import 'package:workout/screens/home/workouts.dart';
-import 'package:workout/screens/scan_qr/index.dart';
-import 'package:workout/screens/workout/new_workout.dart';
+import 'package:workout/screens/scan_qr/view/scan_qr.dart';
+import 'package:workout/screens/workout/workout.dart';
+
+import 'profile.dart';
+import 'workouts.dart';
 
 class HomePage extends StatefulWidget {
-  final String routeName;
+  static const String routeName = '/home';
+  final String subRouteName;
 
-  const HomePage({Key? key, required this.routeName}) : super(key: key);
+  const HomePage({Key? key, required this.subRouteName}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -44,7 +46,7 @@ class _HomePageState extends State<HomePage> {
         child: Scaffold(
           body: Navigator(
             key: _navigatorKey,
-            initialRoute: widget.routeName,
+            initialRoute: widget.subRouteName,
             onGenerateRoute: _onGenerateRoute,
           ),
           floatingActionButton: _navigationSelectedIndex == 0

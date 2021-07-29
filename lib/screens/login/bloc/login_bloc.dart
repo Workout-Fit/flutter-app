@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart' as firebaseAuth;
 import 'package:meta/meta.dart';
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:workout/api/schema.dart';
 import 'package:workout/models/User.dart';
 import 'package:workout/repos/authentication_repository.dart';
 import 'package:flutter/material.dart';
 
 part 'login_event.dart';
-
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -22,19 +22,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         super(InitialLoginState());
 
   @override
-  Stream<LoginState> mapEventToState(
-    LoginEvent event,
-  ) async* {
-    print(event);
+  Stream<LoginState> mapEventToState(LoginEvent event) async* {
     if (event is SendOtpEvent) {
       yield LoadingState();
       subscription = sendOtp(event.phoneNumber).listen((event) {
         add(event);
       });
-    } else if (event is OtpSendEvent) {
+    } else if (event is OtpSentEvent) {
       yield OtpSentState();
     } else if (event is LoginCompleteEvent) {
-      yield LoginCompleteState(event.user);
+      ProfileInfoMixin$ProfileInfo? profileInfo =
+          await _authenticationRepository.getProfileInfo(event.user.id);
+      yield LoginCompleteState(event.user, profileInfo);
     } else if (event is LoginExceptionEvent) {
       yield ExceptionState(message: event.message);
     } else if (event is VerifyOtpEvent) {
@@ -43,9 +42,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         firebaseAuth.UserCredential result =
             await _authenticationRepository.verifyAndLogin(verID, event.otp);
         if (result.user != null) {
-          yield (result.additionalUserInfo?.isNewUser ?? false)
-              ? SignUpState(result.user!.toUser)
-              : LoginCompleteState(result.user!.toUser);
+          ProfileInfoMixin$ProfileInfo? profileInfo =
+              await _authenticationRepository.getProfileInfo(result.user!.uid);
+          yield LoginCompleteState(
+            result.user!.toUser,
+            profileInfo,
+          );
         } else {
           yield OtpExceptionState(message: "Invalid otp!");
         }
@@ -53,6 +55,20 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         yield OtpExceptionState(message: "Invalid otp!");
         print(e);
       }
+    } else if (event is SignUpEvent) {
+      yield SignUpLoadingState(_authenticationRepository.currentUser);
+      subscription = signUp(
+        username: event.username,
+        name: event.name,
+      ).listen((event) {
+        add(event);
+      });
+    } else if (event is SignUpCompleteEvent) {
+      ProfileInfoMixin$ProfileInfo? profileInfo =
+          await _authenticationRepository.getProfileInfo(event.user.id);
+      yield LoginCompleteState(event.user, profileInfo);
+    } else if (event is SignUpExceptionEvent) {
+      yield InitialLoginState();
     } else if (event is LogoutEvent) {
       await _authenticationRepository.logOut();
     }
@@ -72,22 +88,53 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<void> close() async {
     print("Bloc closed");
+    subscription?.cancel();
     super.close();
   }
 
-  Stream<LoginEvent> signUp() async* {
-    // TODO: Create signUp login event
-    // StreamController<LoginEvent> eventStream = StreamController();
+  Stream<LoginEvent> signUp({
+    required String username,
+    required String name,
+    String? bio,
+    double? height,
+    double? weight,
+  }) async* {
+    StreamController<LoginEvent> eventStream = StreamController();
+    try {
+      final result = await _authenticationRepository.signUp(
+        _authenticationRepository.currentUser.id,
+        ProfileInfoInput(
+          username: username,
+          name: name,
+          bio: bio,
+          height: height,
+          weight: weight,
+        ),
+      );
+      eventStream.add(
+        SignUpCompleteEvent(
+          _authenticationRepository.currentUser,
+          ProfileInfoMixin$ProfileInfo.fromJson(
+            result.data!["createUser"]["profileInfo"],
+          ),
+        ),
+      );
+      eventStream.close();
+    } catch (e) {
+      eventStream.add(
+        SignUpExceptionEvent('Error when signing up'),
+      );
+      eventStream.close();
+      throw e;
+    }
+
+    yield* eventStream.stream;
   }
 
   Stream<LoginEvent> sendOtp(String phoneNumber) async* {
     StreamController<LoginEvent> eventStream = StreamController();
     final phoneVerificationCompleted =
-        (firebaseAuth.AuthCredential authCredential) {
-      eventStream
-          .add(LoginCompleteEvent(_authenticationRepository.currentUser));
-      eventStream.close();
-    };
+        (firebaseAuth.AuthCredential authCredential) {};
     final phoneVerificationFailed =
         (firebaseAuth.FirebaseAuthException authException) {
       print(authException.message);
@@ -96,7 +143,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     };
     final phoneCodeSent = (String verId, int? forceResent) {
       this.verID = verId;
-      eventStream.add(OtpSendEvent());
+      eventStream.add(OtpSentEvent());
       eventStream.close();
     };
     final phoneCodeAutoRetrievalTimeout = (String verID) {
@@ -106,7 +153,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     await _authenticationRepository.sendOtp(
       phoneNumber,
-      Duration(seconds: 60),
+      Duration(seconds: 1),
       phoneVerificationFailed,
       phoneVerificationCompleted,
       phoneCodeSent,

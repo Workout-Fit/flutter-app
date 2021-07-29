@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:workout/api/schema.dart';
 import 'package:workout/repos/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -10,13 +11,15 @@ part 'authentication_state.dart';
 
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
-  AuthenticationBloc(
-      {required AuthenticationRepository authenticationRepository})
-      : _authenticationRepository = authenticationRepository,
+  AuthenticationBloc({
+    required AuthenticationRepository authenticationRepository,
+  })  : _authenticationRepository = authenticationRepository,
         super(
-          authenticationRepository.currentUser.isEmpty
+          authenticationRepository.currentUser.isNotEmpty
               ? AuthenticationState.authenticated(
-                  authenticationRepository.currentUser)
+                  authenticationRepository.currentUser,
+                  authenticationRepository.profileInfo,
+                )
               : const AuthenticationState.unauthenticated(),
         ) {
     _userSubscription = _authenticationRepository.user.listen(_onUserChanged);
@@ -33,14 +36,20 @@ class AuthenticationBloc
     if (event is AuthenticationUserChanged) {
       yield _mapUserChangedToState(event, state);
     } else if (event is AuthenticationLogoutRequested) {
+      yield AuthenticationState.unauthenticated();
       _authenticationRepository.logOut();
     }
   }
 
   AuthenticationState _mapUserChangedToState(
-      AuthenticationUserChanged event, AuthenticationState state) {
+    AuthenticationUserChanged event,
+    AuthenticationState state,
+  ) {
     return event.user.isNotEmpty
-        ? AuthenticationState.authenticated(event.user)
+        ? AuthenticationState.authenticated(
+            event.user,
+            event.profileInfo ?? _authenticationRepository.profileInfo,
+          )
         : const AuthenticationState.unauthenticated();
   }
 
