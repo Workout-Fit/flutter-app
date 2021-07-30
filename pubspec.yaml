@@ -50,6 +50,7 @@ dependencies:
   very_good_analysis: ^2.1.2
   intl_phone_number_input: ^0.7.0+2
   flow_builder: ^0.0.3
+  flutter_dotenv: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,8 @@ flutter:
   assets:
     - assets/images/
     - assets/json/
+    - .env
+    - .env.development
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

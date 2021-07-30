@@ -28,7 +28,8 @@ class AuthenticationBloc
   final AuthenticationRepository _authenticationRepository;
   late final StreamSubscription<User> _userSubscription;
 
-  void _onUserChanged(User user) => add(AuthenticationUserChanged(user));
+  void _onUserChanged(User user) => add(
+      AuthenticationUserChanged(user, _authenticationRepository.profileInfo));
 
   @override
   Stream<AuthenticationState> mapEventToState(
