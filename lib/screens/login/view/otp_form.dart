@@ -15,7 +15,7 @@ class OtpArguments {
 }
 
 class OtpForm extends StatefulWidget {
-  static const String routeName = "/login/otp-form";
+  static const String routeName = "login/otp-form";
   final String phoneNumber;
 
   const OtpForm({Key? key, required this.phoneNumber}) : super(key: key);

@@ -13,7 +13,7 @@ import 'package:workout/screens/workout/view/workout_form.dart';
 import 'package:workout/utils/graphql_client.dart';
 
 class NewWorkoutPage extends StatefulWidget {
-  static const routeName = "/workout/new";
+  static const routeName = "new_workout";
 
   const NewWorkoutPage({Key? key}) : super(key: key);
 

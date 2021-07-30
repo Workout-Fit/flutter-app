@@ -53,7 +53,7 @@ class AuthenticationRepository {
       );
       final userCredential =
           await _firebaseAuth.signInWithCredential(authCredential);
-      getProfileInfo(userCredential.user?.uid ?? '');
+      _profileInfo = await getProfileInfo(userCredential.user?.uid ?? '');
       return userCredential;
     } on Exception {
       throw LogInWithPhoneNumberFailure();

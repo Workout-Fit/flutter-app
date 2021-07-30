@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:workout/repos/authentication_repository.dart';
+import 'package:workout/screens/home/home.dart';
 import 'package:workout/screens/login/bloc/login_bloc.dart';
 import 'package:workout/utils/regex.dart';
 
 class SignUpPage extends StatefulWidget {
-  static const String routeName = "/sign-up";
+  static const String routeName = "sign-up";
   final AuthenticationRepository authenticationRepository;
 
   const SignUpPage({
@@ -30,7 +31,15 @@ class _SignUpPageState extends State<SignUpPage> {
         create: (context) => LoginBloc(
           authenticationRepository: widget.authenticationRepository,
         ),
-        child: BlocBuilder<LoginBloc, LoginState>(
+        child: BlocConsumer<LoginBloc, LoginState>(
+          listener: (context, state) {
+            if (state is LoginCompleteState) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                HomePage.routeName,
+                (route) => false,
+              );
+            }
+          },
           builder: (context, state) {
             return LoadingOverlay(
               isLoading: BlocProvider.of<LoginBloc>(context).state

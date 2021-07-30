@@ -1,24 +1,24 @@
 fragment ProfileInfo on User {
-    __type
-    id
-    profileInfo {
-        username
-        name
-        height
-        weight
-        profilePicture
-        bio
-    }
+  __typename
+  id
+  profileInfo {
+    username
+    name
+    height
+    weight
+    profilePicture
+    bio
+  }
 }
 
 mutation CreateUser($id: String!, $profileInfo: ProfileInfoInput!) {
-    createUser(userId: $id, profileInfo: $profileInfo) {
-        ...ProfileInfo
-    }
+  createUser(userId: $id, profileInfo: $profileInfo) {
+    ...ProfileInfo
+  }
 }
 
 query GetUserById($id: String!) {
-    getUserById(id: $id) {
-        ...ProfileInfo
-    }
+  getUserById(id: $id) {
+    ...ProfileInfo
+  }
 }

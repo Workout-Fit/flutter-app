@@ -17,7 +17,7 @@ import 'package:workout/theme/theme.dart';
 import 'package:workout/widgets/item_card.dart';
 
 class WorkoutsPage extends StatefulWidget {
-  static const routeName = "/workouts";
+  static const routeName = "home/workouts";
 
   @override
   _WorkoutsPageState createState() => _WorkoutsPageState();
@@ -105,7 +105,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                   });
                 },
                 title: workouts?[index]?.name ?? '',
-                subtitle: workouts?[index]?.muscleGroups?.join(", ") ?? '',
+                subtitle: workouts?[index]?.muscleGroups.join(", "),
               );
             },
           ),

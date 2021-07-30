@@ -4,14 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout/app/bloc/authentication_bloc.dart';
 import 'package:workout/screens/home/home.dart';
 import 'package:workout/screens/login/login.dart';
-import 'package:workout/screens/login/view/phone_form.dart';
 import 'package:workout/screens/scan_qr/scan_qr.dart';
 import 'package:workout/screens/workout/workout.dart';
 import 'package:workout/theme/theme.dart';
 
 class App extends StatelessWidget {
   final authenticationRepository;
-
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   App({
     Key? key,
     required this.authenticationRepository,
@@ -30,10 +29,22 @@ class App extends StatelessWidget {
       child: ThemeProvider(
         initTheme: theme,
         builder: (context, currentTheme) {
-          return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+            listener: (context, state) {
+              if (state.user.isNotEmpty && state.profileInfo != null) {
+                _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+                    HomePage.routeName, (route) => false);
+              } else if (state.user.isNotEmpty && state.profileInfo == null) {
+                _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+                    SignUpPage.routeName, (route) => false);
+              } else
+                _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+                    LoginPage.routeName, (route) => false);
+            },
             builder: (_, AuthenticationState state) {
               return MaterialApp(
                 title: 'Workout',
+                navigatorKey: _navigatorKey,
                 theme: currentTheme,
                 initialRoute: _getInitialRoute(state),
                 onGenerateRoute: (settings) => _generateRoutes(settings),
@@ -51,11 +62,11 @@ class App extends StatelessWidget {
           ? SignUpPage.routeName
           : HomePage.routeName;
     } else
-      return PhoneForm.routeName;
+      return LoginPage.routeName;
   }
 
   MaterialPageRoute _generateRoutes(RouteSettings settings) {
-    late Widget page;
+    Widget page = Container();
     final workoutId = new RegExp(r"^/view/([^\s]+)$")
         .firstMatch(settings.name ?? '')
         ?.group(1);
@@ -76,7 +87,7 @@ class App extends StatelessWidget {
           authenticationRepository: authenticationRepository,
           subRouteName: settings.name ?? "",
         );
-      } else
+      } else if (settings.name!.startsWith(HomePage.routeName))
         page = HomePage(subRouteName: settings.name ?? "");
     }
     return MaterialPageRoute(

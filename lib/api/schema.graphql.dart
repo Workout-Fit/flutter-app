@@ -8,6 +8,8 @@ import 'package:gql/ast.dart';
 part 'schema.graphql.g.dart';
 
 mixin ProfileInfoMixin {
+  @JsonKey(name: '__typename')
+  String? $$typename;
   late String id;
   ProfileInfoMixin$ProfileInfo? profileInfo;
 }
@@ -15,11 +17,11 @@ mixin WorkoutDetailsMixin {
   @JsonKey(name: '__typename')
   String? $$typename;
   late String id;
-  late String userId;
   WorkoutDetailsMixin$BasedOn? basedOn;
+  late WorkoutDetailsMixin$User user;
   late String name;
   String? description;
-  List<String?>? muscleGroups;
+  late List<String?> muscleGroups;
   List<WorkoutDetailsMixin$Exercises?>? exercises;
 }
 
@@ -117,7 +119,7 @@ class CreateUser$Mutation$CreateUser extends JsonSerializable
       _$CreateUser$Mutation$CreateUserFromJson(json);
 
   @override
-  List<Object?> get props => [id, profileInfo];
+  List<Object?> get props => [$$typename, id, profileInfo];
   @override
   Map<String, dynamic> toJson() => _$CreateUser$Mutation$CreateUserToJson(this);
 }
@@ -178,7 +180,7 @@ class GetUserById$Query$GetUserById extends JsonSerializable
       _$GetUserById$Query$GetUserByIdFromJson(json);
 
   @override
-  List<Object?> get props => [id, profileInfo];
+  List<Object?> get props => [$$typename, id, profileInfo];
   @override
   Map<String, dynamic> toJson() => _$GetUserById$Query$GetUserByIdToJson(this);
 }
@@ -232,7 +234,7 @@ class GetWorkoutsByUserId$Query$GetWorkoutsByUserId extends JsonSerializable
 
   late String name;
 
-  List<String?>? muscleGroups;
+  late List<String?> muscleGroups;
 
   List<GetWorkoutsByUserId$Query$GetWorkoutsByUserId$Exercises?>? exercises;
 
@@ -285,16 +287,19 @@ class CreateWorkout$Mutation$CreateWorkout extends JsonSerializable
           Map<String, dynamic> json) =>
       _$CreateWorkout$Mutation$CreateWorkoutFromJson(json);
 
+  @JsonKey(name: '__typename')
+  String? $$typename;
+
   late String id;
 
   late String name;
 
-  List<String?>? muscleGroups;
+  late List<String?> muscleGroups;
 
   List<CreateWorkout$Mutation$CreateWorkout$Exercises?>? exercises;
 
   @override
-  List<Object?> get props => [id, name, muscleGroups, exercises];
+  List<Object?> get props => [$$typename, id, name, muscleGroups, exercises];
   @override
   Map<String, dynamic> toJson() =>
       _$CreateWorkout$Mutation$CreateWorkoutToJson(this);
@@ -384,12 +389,15 @@ class DeleteWorkout$Mutation$DeleteWorkout extends JsonSerializable
           Map<String, dynamic> json) =>
       _$DeleteWorkout$Mutation$DeleteWorkoutFromJson(json);
 
+  @JsonKey(name: '__typename')
+  String? $$typename;
+
   late String id;
 
   late String name;
 
   @override
-  List<Object?> get props => [id, name];
+  List<Object?> get props => [$$typename, id, name];
   @override
   Map<String, dynamic> toJson() =>
       _$DeleteWorkout$Mutation$DeleteWorkoutToJson(this);
@@ -411,6 +419,24 @@ class DeleteWorkout$Mutation extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
+class WorkoutDetailsMixin$BasedOn$User$ProfileInfo extends JsonSerializable
+    with EquatableMixin {
+  WorkoutDetailsMixin$BasedOn$User$ProfileInfo();
+
+  factory WorkoutDetailsMixin$BasedOn$User$ProfileInfo.fromJson(
+          Map<String, dynamic> json) =>
+      _$WorkoutDetailsMixin$BasedOn$User$ProfileInfoFromJson(json);
+
+  String? username;
+
+  @override
+  List<Object?> get props => [username];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$WorkoutDetailsMixin$BasedOn$User$ProfileInfoToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
 class WorkoutDetailsMixin$BasedOn$User extends JsonSerializable
     with EquatableMixin {
   WorkoutDetailsMixin$BasedOn$User();
@@ -419,10 +445,10 @@ class WorkoutDetailsMixin$BasedOn$User extends JsonSerializable
           Map<String, dynamic> json) =>
       _$WorkoutDetailsMixin$BasedOn$UserFromJson(json);
 
-  String? username;
+  WorkoutDetailsMixin$BasedOn$User$ProfileInfo? profileInfo;
 
   @override
-  List<Object?> get props => [username];
+  List<Object?> get props => [profileInfo];
   @override
   Map<String, dynamic> toJson() =>
       _$WorkoutDetailsMixin$BasedOn$UserToJson(this);
@@ -437,12 +463,51 @@ class WorkoutDetailsMixin$BasedOn extends JsonSerializable with EquatableMixin {
 
   late String id;
 
-  WorkoutDetailsMixin$BasedOn$User? user;
+  late String name;
+
+  late WorkoutDetailsMixin$BasedOn$User user;
 
   @override
-  List<Object?> get props => [id, user];
+  List<Object?> get props => [id, name, user];
   @override
   Map<String, dynamic> toJson() => _$WorkoutDetailsMixin$BasedOnToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class WorkoutDetailsMixin$User$ProfileInfo extends JsonSerializable
+    with EquatableMixin {
+  WorkoutDetailsMixin$User$ProfileInfo();
+
+  factory WorkoutDetailsMixin$User$ProfileInfo.fromJson(
+          Map<String, dynamic> json) =>
+      _$WorkoutDetailsMixin$User$ProfileInfoFromJson(json);
+
+  String? username;
+
+  String? name;
+
+  @override
+  List<Object?> get props => [username, name];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$WorkoutDetailsMixin$User$ProfileInfoToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class WorkoutDetailsMixin$User extends JsonSerializable with EquatableMixin {
+  WorkoutDetailsMixin$User();
+
+  factory WorkoutDetailsMixin$User.fromJson(Map<String, dynamic> json) =>
+      _$WorkoutDetailsMixin$UserFromJson(json);
+
+  late String id;
+
+  WorkoutDetailsMixin$User$ProfileInfo? profileInfo;
+
+  @override
+  List<Object?> get props => [id, profileInfo];
+  @override
+  Map<String, dynamic> toJson() => _$WorkoutDetailsMixin$UserToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -523,8 +588,8 @@ class GetWorkoutById$Query$GetWorkoutById extends JsonSerializable
   List<Object?> get props => [
         $$typename,
         id,
-        userId,
         basedOn,
+        user,
         name,
         description,
         muscleGroups,
@@ -563,8 +628,8 @@ class UpdateWorkout$Mutation$UpdateWorkout extends JsonSerializable
   List<Object?> get props => [
         $$typename,
         id,
-        userId,
         basedOn,
+        user,
         name,
         description,
         muscleGroups,
@@ -588,6 +653,46 @@ class UpdateWorkout$Mutation extends JsonSerializable with EquatableMixin {
   List<Object?> get props => [updateWorkout];
   @override
   Map<String, dynamic> toJson() => _$UpdateWorkout$MutationToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CopyWorkout$Mutation$CopyWorkoutById extends JsonSerializable
+    with EquatableMixin, WorkoutDetailsMixin {
+  CopyWorkout$Mutation$CopyWorkoutById();
+
+  factory CopyWorkout$Mutation$CopyWorkoutById.fromJson(
+          Map<String, dynamic> json) =>
+      _$CopyWorkout$Mutation$CopyWorkoutByIdFromJson(json);
+
+  @override
+  List<Object?> get props => [
+        $$typename,
+        id,
+        basedOn,
+        user,
+        name,
+        description,
+        muscleGroups,
+        exercises
+      ];
+  @override
+  Map<String, dynamic> toJson() =>
+      _$CopyWorkout$Mutation$CopyWorkoutByIdToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CopyWorkout$Mutation extends JsonSerializable with EquatableMixin {
+  CopyWorkout$Mutation();
+
+  factory CopyWorkout$Mutation.fromJson(Map<String, dynamic> json) =>
+      _$CopyWorkout$MutationFromJson(json);
+
+  CopyWorkout$Mutation$CopyWorkoutById? copyWorkoutById;
+
+  @override
+  List<Object?> get props => [copyWorkoutById];
+  @override
+  Map<String, dynamic> toJson() => _$CopyWorkout$MutationToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -710,6 +815,12 @@ final CREATE_USER_MUTATION_DOCUMENT = DocumentNode(definitions: [
           on: NamedTypeNode(name: NameNode(value: 'User'), isNonNull: false)),
       directives: [],
       selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
         FieldNode(
             name: NameNode(value: 'id'),
             alias: null,
@@ -841,6 +952,12 @@ final GET_USER_BY_ID_QUERY_DOCUMENT = DocumentNode(definitions: [
           on: NamedTypeNode(name: NameNode(value: 'User'), isNonNull: false)),
       directives: [],
       selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
         FieldNode(
             name: NameNode(value: 'id'),
             alias: null,
@@ -1083,6 +1200,12 @@ final CREATE_WORKOUT_MUTATION_DOCUMENT = DocumentNode(definitions: [
             directives: [],
             selectionSet: SelectionSetNode(selections: [
               FieldNode(
+                  name: NameNode(value: '__typename'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
                   name: NameNode(value: 'id'),
                   alias: null,
                   arguments: [],
@@ -1178,6 +1301,12 @@ final DELETE_WORKOUT_MUTATION_DOCUMENT = DocumentNode(definitions: [
             directives: [],
             selectionSet: SelectionSetNode(selections: [
               FieldNode(
+                  name: NameNode(value: '__typename'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
                   name: NameNode(value: 'id'),
                   alias: null,
                   arguments: [],
@@ -1250,12 +1379,6 @@ final GET_WORKOUT_BY_ID_QUERY_DOCUMENT = DocumentNode(definitions: [
             directives: [],
             selectionSet: null),
         FieldNode(
-            name: NameNode(value: 'userId'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
             name: NameNode(value: 'basedOn'),
             alias: null,
             arguments: [],
@@ -1268,13 +1391,58 @@ final GET_WORKOUT_BY_ID_QUERY_DOCUMENT = DocumentNode(definitions: [
                   directives: [],
                   selectionSet: null),
               FieldNode(
+                  name: NameNode(value: 'name'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
                   name: NameNode(value: 'user'),
                   alias: null,
                   arguments: [],
                   directives: [],
                   selectionSet: SelectionSetNode(selections: [
                     FieldNode(
+                        name: NameNode(value: 'profileInfo'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: SelectionSetNode(selections: [
+                          FieldNode(
+                              name: NameNode(value: 'username'),
+                              alias: null,
+                              arguments: [],
+                              directives: [],
+                              selectionSet: null)
+                        ]))
+                  ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'user'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'profileInfo'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
                         name: NameNode(value: 'username'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'name'),
                         alias: null,
                         arguments: [],
                         directives: [],
@@ -1449,12 +1617,6 @@ final UPDATE_WORKOUT_MUTATION_DOCUMENT = DocumentNode(definitions: [
             directives: [],
             selectionSet: null),
         FieldNode(
-            name: NameNode(value: 'userId'),
-            alias: null,
-            arguments: [],
-            directives: [],
-            selectionSet: null),
-        FieldNode(
             name: NameNode(value: 'basedOn'),
             alias: null,
             arguments: [],
@@ -1467,13 +1629,58 @@ final UPDATE_WORKOUT_MUTATION_DOCUMENT = DocumentNode(definitions: [
                   directives: [],
                   selectionSet: null),
               FieldNode(
+                  name: NameNode(value: 'name'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
                   name: NameNode(value: 'user'),
                   alias: null,
                   arguments: [],
                   directives: [],
                   selectionSet: SelectionSetNode(selections: [
                     FieldNode(
+                        name: NameNode(value: 'profileInfo'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: SelectionSetNode(selections: [
+                          FieldNode(
+                              name: NameNode(value: 'username'),
+                              alias: null,
+                              arguments: [],
+                              directives: [],
+                              selectionSet: null)
+                        ]))
+                  ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'user'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'profileInfo'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
                         name: NameNode(value: 'username'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'name'),
                         alias: null,
                         arguments: [],
                         directives: [],
@@ -1609,4 +1816,253 @@ class UpdateWorkoutMutation
   @override
   UpdateWorkout$Mutation parse(Map<String, dynamic> json) =>
       UpdateWorkout$Mutation.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CopyWorkoutArguments extends JsonSerializable with EquatableMixin {
+  CopyWorkoutArguments({required this.workoutId, required this.userId});
+
+  @override
+  factory CopyWorkoutArguments.fromJson(Map<String, dynamic> json) =>
+      _$CopyWorkoutArgumentsFromJson(json);
+
+  late String workoutId;
+
+  late String userId;
+
+  @override
+  List<Object?> get props => [workoutId, userId];
+  @override
+  Map<String, dynamic> toJson() => _$CopyWorkoutArgumentsToJson(this);
+}
+
+final COPY_WORKOUT_MUTATION_DOCUMENT = DocumentNode(definitions: [
+  FragmentDefinitionNode(
+      name: NameNode(value: 'WorkoutDetails'),
+      typeCondition: TypeConditionNode(
+          on: NamedTypeNode(
+              name: NameNode(value: 'Workout'), isNonNull: false)),
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: '__typename'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'id'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'basedOn'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'name'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'user'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'profileInfo'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: SelectionSetNode(selections: [
+                          FieldNode(
+                              name: NameNode(value: 'username'),
+                              alias: null,
+                              arguments: [],
+                              directives: [],
+                              selectionSet: null)
+                        ]))
+                  ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'user'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'id'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'profileInfo'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'username'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'name'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null)
+                  ]))
+            ])),
+        FieldNode(
+            name: NameNode(value: 'name'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'description'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'muscleGroups'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: null),
+        FieldNode(
+            name: NameNode(value: 'exercises'),
+            alias: null,
+            arguments: [],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FieldNode(
+                  name: NameNode(value: 'exerciseId'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'sets'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'repetitions'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'rest'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'notes'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: null),
+              FieldNode(
+                  name: NameNode(value: 'exercise'),
+                  alias: null,
+                  arguments: [],
+                  directives: [],
+                  selectionSet: SelectionSetNode(selections: [
+                    FieldNode(
+                        name: NameNode(value: 'name'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: null),
+                    FieldNode(
+                        name: NameNode(value: 'muscleGroup'),
+                        alias: null,
+                        arguments: [],
+                        directives: [],
+                        selectionSet: SelectionSetNode(selections: [
+                          FieldNode(
+                              name: NameNode(value: 'name'),
+                              alias: null,
+                              arguments: [],
+                              directives: [],
+                              selectionSet: null)
+                        ]))
+                  ]))
+            ]))
+      ])),
+  OperationDefinitionNode(
+      type: OperationType.mutation,
+      name: NameNode(value: 'CopyWorkout'),
+      variableDefinitions: [
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'workoutId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: []),
+        VariableDefinitionNode(
+            variable: VariableNode(name: NameNode(value: 'userId')),
+            type:
+                NamedTypeNode(name: NameNode(value: 'String'), isNonNull: true),
+            defaultValue: DefaultValueNode(value: null),
+            directives: [])
+      ],
+      directives: [],
+      selectionSet: SelectionSetNode(selections: [
+        FieldNode(
+            name: NameNode(value: 'copyWorkoutById'),
+            alias: null,
+            arguments: [
+              ArgumentNode(
+                  name: NameNode(value: 'id'),
+                  value: VariableNode(name: NameNode(value: 'workoutId'))),
+              ArgumentNode(
+                  name: NameNode(value: 'userId'),
+                  value: VariableNode(name: NameNode(value: 'userId')))
+            ],
+            directives: [],
+            selectionSet: SelectionSetNode(selections: [
+              FragmentSpreadNode(
+                  name: NameNode(value: 'WorkoutDetails'), directives: [])
+            ]))
+      ]))
+]);
+
+class CopyWorkoutMutation
+    extends GraphQLQuery<CopyWorkout$Mutation, CopyWorkoutArguments> {
+  CopyWorkoutMutation({required this.variables});
+
+  @override
+  final DocumentNode document = COPY_WORKOUT_MUTATION_DOCUMENT;
+
+  @override
+  final String operationName = 'CopyWorkout';
+
+  @override
+  final CopyWorkoutArguments variables;
+
+  @override
+  List<Object?> get props => [document, operationName, variables];
+  @override
+  CopyWorkout$Mutation parse(Map<String, dynamic> json) =>
+      CopyWorkout$Mutation.fromJson(json);
 }

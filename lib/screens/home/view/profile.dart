@@ -4,7 +4,7 @@ import 'package:workout/app/bloc/authentication_bloc.dart';
 import 'package:workout/screens/login/login.dart';
 
 class ProfilePage extends StatefulWidget {
-  static const routeName = "/profile";
+  static const routeName = "home/profile";
 
   const ProfilePage({Key? key}) : super(key: key);
 

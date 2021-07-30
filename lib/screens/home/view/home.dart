@@ -9,7 +9,7 @@ import 'profile.dart';
 import 'workouts.dart';
 
 class HomePage extends StatefulWidget {
-  static const String routeName = '/home';
+  static const String routeName = 'home';
   final String subRouteName;
 
   const HomePage({Key? key, required this.subRouteName}) : super(key: key);

@@ -7,7 +7,7 @@ import 'package:workout/utils/regex.dart';
 import 'package:workout/screens/workout/workout.dart';
 
 class ScanQRPage extends StatefulWidget {
-  static const routeName = "/qr-scan";
+  static const routeName = "qr-scan";
 
   const ScanQRPage({Key? key}) : super(key: key);
 

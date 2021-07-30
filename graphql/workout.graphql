@@ -12,6 +12,7 @@ query GetWorkoutsByUserId($userId: String!) {
 
 mutation CreateWorkout($workout: WorkoutInput!) {
   createWorkout(workout: $workout) {
+    __typename
     id
     name
     muscleGroups
@@ -23,6 +24,7 @@ mutation CreateWorkout($workout: WorkoutInput!) {
 
 mutation DeleteWorkout($id: String!) {
   deleteWorkout(id: $id) {
+    __typename
     id
     name
   }

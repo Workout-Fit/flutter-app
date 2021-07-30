@@ -30,10 +30,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       });
     } else if (event is OtpSentEvent) {
       yield OtpSentState();
-    } else if (event is LoginCompleteEvent) {
-      ProfileInfoMixin$ProfileInfo? profileInfo =
-          await _authenticationRepository.getProfileInfo(event.user.id);
-      yield LoginCompleteState(event.user, profileInfo);
     } else if (event is LoginExceptionEvent) {
       yield ExceptionState(message: event.message);
     } else if (event is VerifyOtpEvent) {
@@ -42,11 +38,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         firebaseAuth.UserCredential result =
             await _authenticationRepository.verifyAndLogin(verID, event.otp);
         if (result.user != null) {
-          ProfileInfoMixin$ProfileInfo? profileInfo =
-              await _authenticationRepository.getProfileInfo(result.user!.uid);
           yield LoginCompleteState(
             result.user!.toUser,
-            profileInfo,
+            _authenticationRepository.profileInfo,
           );
         } else {
           yield OtpExceptionState(message: "Invalid otp!");

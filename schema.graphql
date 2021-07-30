@@ -87,7 +87,6 @@ type Query {
 type User {
   id: String!
   profileInfo: ProfileInfo
-  username: String
   workout: [Workout]
 }
 
@@ -97,9 +96,9 @@ type Workout {
   description: String
   exercises: [WorkoutExercise]
   id: String!
-  muscleGroups: [String]
+  muscleGroups: [String]!
   name: String!
-  user: User
+  user: User!
   userId: String!
 }
 

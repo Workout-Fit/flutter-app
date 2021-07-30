@@ -9,12 +9,13 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:workout/api/schema.dart';
 import 'package:workout/app/bloc/authentication_bloc.dart';
-import 'package:workout/screens/home/view/workouts.dart';
+import 'package:workout/screens/workout/bloc/copy_workout_bloc.dart';
 import 'package:workout/screens/workout/bloc/delete_workout_bloc.dart';
 import 'package:workout/screens/workout/bloc/get_workout_bloc.dart';
 import 'package:workout/screens/workout/bloc/update_workout_bloc.dart';
 import 'package:workout/screens/workout/view/workout_form.dart';
 import 'package:workout/utils/graphql_client.dart';
+import 'package:workout/widgets/error_snackbar.dart';
 import 'exercise_list.dart';
 
 class WorkoutArguments {
@@ -24,7 +25,7 @@ class WorkoutArguments {
 }
 
 class WorkoutPage extends StatefulWidget {
-  static const routeName = "/workout";
+  static const routeName = "workout";
   final String workoutId;
 
   const WorkoutPage({
@@ -41,6 +42,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   late WorkoutBloc _workoutBloc;
   late DeleteWorkoutBloc _deleteWorkoutBloc;
   late UpdateWorkoutBloc _updateWorkoutBloc;
+  late CopyWorkoutBloc _copyWorkoutBloc;
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   List<WorkoutDetailsMixin$Exercises> _exercises = [];
@@ -51,9 +53,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
   void initState() {
     super.initState();
     _workoutBloc = WorkoutBloc(client: client)
-      ..run(
-        variables: GetWorkoutByIdArguments(id: widget.workoutId).toJson(),
-      );
+      ..run(variables: GetWorkoutByIdArguments(id: widget.workoutId).toJson());
+    _copyWorkoutBloc = CopyWorkoutBloc(client: client);
     _deleteWorkoutBloc = DeleteWorkoutBloc(client: client);
     _updateWorkoutBloc = UpdateWorkoutBloc(client: client);
   }
@@ -148,13 +149,14 @@ class _WorkoutPageState extends State<WorkoutPage> {
                           ),
                         );
                         Fluttertoast.showToast(
-                            msg: "Copied to clipboard",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.red,
-                            textColor: Colors.white,
-                            fontSize: 16.0);
+                          msg: "Copied to clipboard",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
                       },
                       icon: Icon(Icons.copy),
                     ),
@@ -178,14 +180,24 @@ class _WorkoutPageState extends State<WorkoutPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                if (workout.userId != "user_id")
-                  Text(
-                    "Created by ${workout.basedOn?.user?.username ?? ""}",
-                    style: Theme.of(context).textTheme.caption,
+                if (workout.basedOn != null)
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushReplacementNamed(
+                        WorkoutPage.routeName,
+                        arguments:
+                            WorkoutArguments(workoutId: workout.basedOn!.id),
+                      );
+                    },
+                    child: Text(
+                      "Based on ${workout.basedOn!.name}",
+                      style: Theme.of(context).textTheme.caption,
+                    ),
                   )
-                else if (workout.basedOn != null)
+                else if (workout.user.id !=
+                    BlocProvider.of<AuthenticationBloc>(context).state.user.id)
                   Text(
-                    "Based on ${workout.basedOn?.user?.username ?? ""}",
+                    "Created by ${workout.user.profileInfo?.username}",
                     style: Theme.of(context).textTheme.caption,
                   ),
                 Text(
@@ -289,11 +301,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Widget _workoutInfo(GetWorkoutById$Query? data, QueryResult? result) {
-    if (data == null) {
-      return Container();
-    }
-
-    final workout = data.getWorkoutById;
+    final workout = data?.getWorkoutById;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,42 +325,49 @@ class _WorkoutPageState extends State<WorkoutPage> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: (() {
-                    if (workout!.userId ==
+                    if (workout!.user.id ==
                         BlocProvider.of<AuthenticationBloc>(
                           context,
                         ).state.user.id) {
-                      return _editMode
-                          ? IconButton(
-                              onPressed: () {
-                                _updateWorkoutBloc.run(
-                                  UpdateWorkoutArguments(
-                                    workout: WorkoutInput(
-                                      id: workout.id,
-                                      name: _nameController.text,
-                                      userId:
-                                          BlocProvider.of<AuthenticationBloc>(
-                                        context,
-                                      ).state.user.id,
-                                      description: _descriptionController.text,
-                                      exercises: _exercises
-                                          .map(
-                                            (exercise) => ExercisesInput(
-                                              exerciseId: exercise.exerciseId,
-                                              repetitions: exercise.repetitions,
-                                              rest: exercise.rest,
-                                              sets: exercise.sets,
-                                            ),
-                                          )
-                                          .toList(),
-                                    ),
-                                  ).toJson(),
-                                );
-                              },
-                              icon: const Icon(Icons.save),
-                            )
-                          : _popupMenu(workout);
+                      if (_editMode)
+                        return IconButton(
+                          onPressed: () {
+                            _updateWorkoutBloc.run(UpdateWorkoutArguments(
+                                workout: WorkoutInput(
+                              id: workout.id,
+                              name: _nameController.text,
+                              userId: BlocProvider.of<AuthenticationBloc>(
+                                context,
+                              ).state.user.id,
+                              description: _descriptionController.text,
+                              exercises: _exercises
+                                  .map((exercise) => ExercisesInput(
+                                        exerciseId: exercise.exerciseId,
+                                        repetitions: exercise.repetitions,
+                                        rest: exercise.rest,
+                                        sets: exercise.sets,
+                                      ))
+                                  .toList(),
+                            )).toJson());
+                          },
+                          icon: const Icon(Icons.save),
+                        );
+                      else
+                        return _popupMenu(workout);
                     } else
-                      return Text('');
+                      return IconButton(
+                        onPressed: () {
+                          _copyWorkoutBloc.run(
+                            CopyWorkoutArguments(
+                              workoutId: workout.id,
+                              userId: BlocProvider.of<AuthenticationBloc>(
+                                context,
+                              ).state.user.id,
+                            ).toJson(),
+                          );
+                        },
+                        icon: const Icon(Icons.save),
+                      );
                   }()),
                 ),
               ),
@@ -397,9 +412,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: const Text('Workout deleted'),
                         ));
-                        Navigator.of(context).popUntil(
-                          ModalRoute.withName(WorkoutsPage.routeName),
-                        );
+                        Navigator.of(context).pop();
                       },
                       loading: () {
                         setState(() {
@@ -407,29 +420,85 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         });
                         Navigator.of(context).pop();
                       },
+                      error: (_, __) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          errorSnackBar(
+                            'Error when deleting Workout',
+                          ),
+                        );
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
                       orElse: () => {},
                     );
                   },
                 ),
                 BlocListener<UpdateWorkoutBloc,
-                        MutationState<UpdateWorkout$Mutation>>(
-                    bloc: _updateWorkoutBloc,
-                    listener: (context, state) {
-                      state.maybeWhen(
-                        completed: (data, result) {
-                          setState(() {
-                            _isLoading = false;
-                            _editMode = false;
-                          });
-                        },
-                        loading: () {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                        },
-                        orElse: () => {},
-                      );
-                    })
+                    MutationState<UpdateWorkout$Mutation>>(
+                  bloc: _updateWorkoutBloc,
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      completed: (data, result) {
+                        setState(() {
+                          _isLoading = false;
+                          _editMode = false;
+                        });
+                      },
+                      loading: () {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                      },
+                      error: (_, __) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          errorSnackBar(
+                            'Error when updating Workout',
+                          ),
+                        );
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
+                      orElse: () => {},
+                    );
+                  },
+                ),
+                BlocListener<CopyWorkoutBloc,
+                    MutationState<CopyWorkout$Mutation>>(
+                  bloc: _copyWorkoutBloc,
+                  listener: (blocContext, state) {
+                    state.maybeWhen(
+                      completed: (_, result) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: const Text('Workout copied'),
+                        ));
+                        Navigator.of(context).pushReplacementNamed(
+                          WorkoutPage.routeName,
+                          arguments: WorkoutArguments(
+                            workoutId: result.data!['copyWorkoutById']['id'],
+                          ),
+                        );
+                      },
+                      loading: () {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                      },
+                      error: (_, __) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          errorSnackBar(
+                            'Error when copying Workout',
+                          ),
+                        );
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
+                      orElse: () => {},
+                    );
+                  },
+                ),
               ],
               child: BlocBuilder<WorkoutBloc, QueryState<GetWorkoutById$Query>>(
                 bloc: _workoutBloc,

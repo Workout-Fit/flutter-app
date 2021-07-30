@@ -1,29 +1,33 @@
 fragment WorkoutDetails on Workout {
   __typename
+  id
+  basedOn {
     id
-    userId
-    basedOn {
-      id
-      user {
-        username
-      }
-    }
     name
-    description
-    muscleGroups
-    exercises {
-      exerciseId
-      sets
-      repetitions
-      rest
-      notes
-      exercise {
+  }
+  user {
+    id
+    profileInfo {
+      username
+      name
+    }
+  }
+  name
+  description
+  muscleGroups
+  exercises {
+    exerciseId
+    sets
+    repetitions
+    rest
+    notes
+    exercise {
+      name
+      muscleGroup {
         name
-        muscleGroup {
-          name
-        }
       }
     }
+  }
 }
 
 query GetWorkoutById($id: String!) {
@@ -34,6 +38,12 @@ query GetWorkoutById($id: String!) {
 
 mutation UpdateWorkout($workout: WorkoutInput!) {
   updateWorkout(workout: $workout) {
+    ...WorkoutDetails
+  }
+}
+
+mutation CopyWorkout($workoutId: String!, $userId: String!) {
+  copyWorkoutById(id: $workoutId, userId: $userId) {
     ...WorkoutDetails
   }
 }

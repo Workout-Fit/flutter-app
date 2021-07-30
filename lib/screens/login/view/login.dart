@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:workout/repos/authentication_repository.dart';
 import 'package:workout/screens/login/bloc/login_bloc.dart';
+import 'package:workout/widgets/error_snackbar.dart';
 
 import 'otp_form.dart';
 import 'phone_form.dart';
 
 class LoginPage extends StatelessWidget {
-  static const String routeName = '/login';
+  static const String routeName = 'login';
   final AuthenticationRepository authenticationRepository;
   final String subRouteName;
 
@@ -36,25 +37,7 @@ class LoginPage extends StatelessWidget {
               }
               ScaffoldMessenger.of(context)
                 ..removeCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 250.0,
-                          child: Text(
-                            message,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                        ),
-                        Icon(Icons.error)
-                      ],
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+                ..showSnackBar(errorSnackBar(message));
             }
           },
           child: Navigator(
