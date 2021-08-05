@@ -47,7 +47,7 @@ class _NewWorkoutPageState extends State<NewWorkoutPage> {
       body: LoadingOverlay(
         isLoading: _loading,
         child: Container(
-          margin: const EdgeInsets.only(top: 48.0),
+          margin: const EdgeInsets.only(top: 40.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

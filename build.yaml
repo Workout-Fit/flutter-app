@@ -12,3 +12,10 @@ targets:
               queries_glob: graphql/*.graphql
               output: lib/api/schema.dart
               naming_scheme: pathedWithFields
+          scalar_mapping:
+            - graphql_type: Upload
+              custom_parser_import: 'package:workout/api/scalars/upload_scalar.dart'
+              dart_type:
+                name: MultipartFile
+                imports:
+                  - 'package:http/http.dart'

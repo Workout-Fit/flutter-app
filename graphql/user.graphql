@@ -15,6 +15,11 @@ mutation CreateUser($id: String!, $profileInfo: ProfileInfoInput!) {
   createUser(userId: $id, profileInfo: $profileInfo) {
     ...ProfileInfo
   }
+
+}mutation UpdateProfileInfo($id: String!, $profileInfo: ProfileInfoInput!) {
+  updateProfileInfo(userId: $id, profileInfo: $profileInfo) {
+    ...ProfileInfo
+  }
 }
 
 query GetUserById($id: String!) {

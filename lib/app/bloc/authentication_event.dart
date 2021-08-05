@@ -10,17 +10,7 @@ abstract class AuthenticationEvent extends Equatable {
 class AuthenticationLogoutRequested extends AuthenticationEvent {}
 
 class AuthenticationUserChanged extends AuthenticationEvent {
-  const AuthenticationUserChanged(this.user, [this.profileInfo]);
-
-  final User user;
-  final ProfileInfoMixin$ProfileInfo? profileInfo;
-
-  @override
-  List<Object> get props => [user, profileInfo ?? {}];
-}
-
-class AuthenticationUserInfo extends AuthenticationEvent {
-  const AuthenticationUserInfo(this.user);
+  const AuthenticationUserChanged(this.user);
 
   final User user;
 

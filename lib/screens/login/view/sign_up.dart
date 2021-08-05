@@ -8,12 +8,8 @@ import 'package:workout/utils/regex.dart';
 
 class SignUpPage extends StatefulWidget {
   static const String routeName = "sign-up";
-  final AuthenticationRepository authenticationRepository;
 
-  const SignUpPage({
-    Key? key,
-    required this.authenticationRepository,
-  }) : super(key: key);
+  const SignUpPage({Key? key}) : super(key: key);
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -29,7 +25,8 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(
-          authenticationRepository: widget.authenticationRepository,
+          authenticationRepository:
+              RepositoryProvider.of<AuthenticationRepository>(context),
         ),
         child: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
@@ -46,8 +43,8 @@ class _SignUpPageState extends State<SignUpPage> {
                   is SignUpLoadingState,
               child: Container(
                 padding: EdgeInsets.only(
-                  left: 24.0,
-                  right: 24.0,
+                  left: 16.0,
+                  right: 16.0,
                   top: 64.0,
                   bottom: 40.0,
                 ),

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:workout/api/schema.dart';
 import 'package:workout/repos/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,9 +16,7 @@ class AuthenticationBloc
         super(
           authenticationRepository.currentUser.isNotEmpty
               ? AuthenticationState.authenticated(
-                  authenticationRepository.currentUser,
-                  authenticationRepository.profileInfo,
-                )
+                  authenticationRepository.currentUser)
               : const AuthenticationState.unauthenticated(),
         ) {
     _userSubscription = _authenticationRepository.user.listen(_onUserChanged);
@@ -28,8 +25,7 @@ class AuthenticationBloc
   final AuthenticationRepository _authenticationRepository;
   late final StreamSubscription<User> _userSubscription;
 
-  void _onUserChanged(User user) => add(
-      AuthenticationUserChanged(user, _authenticationRepository.profileInfo));
+  void _onUserChanged(User user) => add(AuthenticationUserChanged(user));
 
   @override
   Stream<AuthenticationState> mapEventToState(
@@ -47,10 +43,7 @@ class AuthenticationBloc
     AuthenticationState state,
   ) {
     return event.user.isNotEmpty
-        ? AuthenticationState.authenticated(
-            event.user,
-            event.profileInfo ?? _authenticationRepository.profileInfo,
-          )
+        ? AuthenticationState.authenticated(event.user)
         : const AuthenticationState.unauthenticated();
   }
 

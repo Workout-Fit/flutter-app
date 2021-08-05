@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:graphql/client.dart';
+import 'package:hive/hive.dart';
 import 'package:workout/api/schema.dart';
 import 'package:workout/models/User.dart';
 import 'package:workout/utils/graphql_client.dart';
@@ -14,7 +15,7 @@ class LogOutFailure implements Exception {}
 
 class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
-  ProfileInfoMixin$ProfileInfo? _profileInfo;
+  final _userBox = Hive.box('workout');
 
   AuthenticationRepository({
     firebase_auth.FirebaseAuth? firebaseAuth,
@@ -42,10 +43,7 @@ class AuthenticationRepository {
     }
   }
 
-  Future<firebase_auth.UserCredential> verifyAndLogin(
-    String verificationId,
-    String smsCode,
-  ) async {
+  Future<User> verifyAndLogin(String verificationId, String smsCode) async {
     try {
       final authCredential = firebase_auth.PhoneAuthProvider.credential(
         verificationId: verificationId,
@@ -53,20 +51,21 @@ class AuthenticationRepository {
       );
       final userCredential =
           await _firebaseAuth.signInWithCredential(authCredential);
-      _profileInfo = await getProfileInfo(userCredential.user?.uid ?? '');
-      return userCredential;
+      return userCredential.user != null
+          ? userCredential.user!.toUser(
+              await this.isCurrentUserSignedUp(userCredential.user!.uid),
+            )
+          : User.empty;
     } on Exception {
       throw LogInWithPhoneNumberFailure();
     }
   }
 
-  get profileInfo => _profileInfo;
-
-  Future<QueryResult> signUp(
+  Future<User> signUp(
     String userId,
     ProfileInfoInput profileInfo,
   ) async {
-    return client.mutate(
+    final result = await client.mutate(
       MutationOptions(
         document: CREATE_USER_MUTATION_DOCUMENT,
         variables: CreateUserArguments(
@@ -75,32 +74,37 @@ class AuthenticationRepository {
         ).toJson(),
       ),
     );
+
+    currentUser = currentUser.copyWith(isSignedUp: result.data!.isNotEmpty);
+
+    return currentUser;
   }
 
   Stream<User> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
-      final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
-      return user;
+    return _firebaseAuth.authStateChanges().asyncMap((firebaseUser) async {
+      if (firebaseUser != null) {
+        final isSignedUp = await this.isCurrentUserSignedUp(firebaseUser.uid);
+        final user = firebaseUser.toUser(isSignedUp);
+        _userBox.put(User.boxKeyName, user);
+        return user;
+      } else {
+        _userBox.put(User.boxKeyName, User.empty);
+        return User.empty;
+      }
     });
   }
 
-  Future<ProfileInfoMixin$ProfileInfo?> getProfileInfo(
+  Future<bool> isCurrentUserSignedUp(
     String userId,
   ) async {
     final result = await client.query(
       QueryOptions(
         document: GET_USER_BY_ID_QUERY_DOCUMENT,
         variables: GetUserByIdArguments(id: userId).toJson(),
-        fetchPolicy: FetchPolicy.noCache,
       ),
     );
 
-    _profileInfo = result.data!["getUserById"] != null
-        ? ProfileInfoMixin$ProfileInfo.fromJson(
-            result.data!["getUserById"]["profileInfo"],
-          )
-        : null;
-    return _profileInfo;
+    return result.data!.isNotEmpty;
   }
 
   Future<void> logOut() async {
@@ -111,11 +115,20 @@ class AuthenticationRepository {
     }
   }
 
-  User get currentUser => _firebaseAuth.currentUser?.toUser ?? User.empty;
+  User get currentUser => _userBox.get(User.boxKeyName) ?? User.empty;
+
+  set currentUser(User user) {
+    _userBox.put(User.boxKeyName, user);
+  }
 }
 
 extension on firebase_auth.User {
-  User get toUser {
-    return User(id: uid, email: email, phoneNumber: phoneNumber);
+  User toUser(bool isSignedUp) {
+    return User(
+      id: uid,
+      email: email,
+      phoneNumber: phoneNumber,
+      isSignedUp: isSignedUp,
+    );
   }
 }

@@ -26,12 +26,10 @@ class OtpVerifiedState extends LoginState {
 @immutable
 class LoginCompleteState extends LoginState {
   final User user;
-  final ProfileInfoMixin$ProfileInfo? profileInfo;
-
-  LoginCompleteState(this.user, this.profileInfo);
+  LoginCompleteState(this.user);
 
   @override
-  List<Object> get props => [user, profileInfo ?? {}];
+  List<Object> get props => [user];
 }
 
 @immutable

@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:workout/screens/home/view/home.dart';
 import 'package:workout/screens/login/bloc/login_bloc.dart';
-import 'package:workout/screens/login/view/sign_up.dart';
 
 class OtpArguments {
   final String phoneNumber;
@@ -37,16 +35,7 @@ class OtpFormState extends State<OtpForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginBloc, LoginState>(
-      listener: (BuildContext context, LoginState state) {
-        if (state is LoginCompleteState) {
-          Navigator.of(context, rootNavigator: true).pushNamed(
-            state.profileInfo == null
-                ? SignUpPage.routeName
-                : HomePage.routeName,
-          );
-        }
-      },
+    return BlocBuilder<LoginBloc, LoginState>(
       builder: (BuildContext context, LoginState state) {
         if (state is OtpExceptionState) {
           errorController.add(ErrorAnimationType.shake);

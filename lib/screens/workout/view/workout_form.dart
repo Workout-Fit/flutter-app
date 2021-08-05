@@ -43,7 +43,7 @@ class WorkoutForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextFormField(
               controller: nameController,
               decoration: const InputDecoration(
@@ -58,7 +58,7 @@ class WorkoutForm extends StatelessWidget {
           ),
           const SizedBox(height: 24.0),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextFormField(
               controller: descriptionController,
               decoration: const InputDecoration(
@@ -70,7 +70,7 @@ class WorkoutForm extends StatelessWidget {
           ),
           const SizedBox(height: 24.0),
           Padding(
-            padding: const EdgeInsets.only(left: 24.0),
+            padding: const EdgeInsets.only(left: 16.0),
             child: Text(
               "Exercises",
               style: Theme.of(context).textTheme.headline4,

@@ -118,7 +118,8 @@ ProfileInfoInput _$ProfileInfoInputFromJson(Map<String, dynamic> json) {
     bio: json['bio'] as String?,
     height: (json['height'] as num?)?.toDouble(),
     name: json['name'] as String,
-    profilePicture: json['profilePicture'] as String?,
+    profilePicture: fromGraphQLUploadNullableToDartMultipartFileNullable(
+        json['profilePicture'] as MultipartFile?),
     username: json['username'] as String,
     weight: (json['weight'] as num?)?.toDouble(),
   );
@@ -129,9 +130,45 @@ Map<String, dynamic> _$ProfileInfoInputToJson(ProfileInfoInput instance) =>
       'bio': instance.bio,
       'height': instance.height,
       'name': instance.name,
-      'profilePicture': instance.profilePicture,
+      'profilePicture': fromDartMultipartFileNullableToGraphQLUploadNullable(
+          instance.profilePicture),
       'username': instance.username,
       'weight': instance.weight,
+    };
+
+UpdateProfileInfo$Mutation$UpdateProfileInfo
+    _$UpdateProfileInfo$Mutation$UpdateProfileInfoFromJson(
+        Map<String, dynamic> json) {
+  return UpdateProfileInfo$Mutation$UpdateProfileInfo()
+    ..$$typename = json['__typename'] as String?
+    ..id = json['id'] as String
+    ..profileInfo = json['profileInfo'] == null
+        ? null
+        : ProfileInfoMixin$ProfileInfo.fromJson(
+            json['profileInfo'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$UpdateProfileInfo$Mutation$UpdateProfileInfoToJson(
+        UpdateProfileInfo$Mutation$UpdateProfileInfo instance) =>
+    <String, dynamic>{
+      '__typename': instance.$$typename,
+      'id': instance.id,
+      'profileInfo': instance.profileInfo?.toJson(),
+    };
+
+UpdateProfileInfo$Mutation _$UpdateProfileInfo$MutationFromJson(
+    Map<String, dynamic> json) {
+  return UpdateProfileInfo$Mutation()
+    ..updateProfileInfo = json['updateProfileInfo'] == null
+        ? null
+        : UpdateProfileInfo$Mutation$UpdateProfileInfo.fromJson(
+            json['updateProfileInfo'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$UpdateProfileInfo$MutationToJson(
+        UpdateProfileInfo$Mutation instance) =>
+    <String, dynamic>{
+      'updateProfileInfo': instance.updateProfileInfo?.toJson(),
     };
 
 GetUserById$Query$GetUserById _$GetUserById$Query$GetUserByIdFromJson(
@@ -356,41 +393,11 @@ Map<String, dynamic> _$DeleteWorkout$MutationToJson(
       'deleteWorkout': instance.deleteWorkout?.toJson(),
     };
 
-WorkoutDetailsMixin$BasedOn$User$ProfileInfo
-    _$WorkoutDetailsMixin$BasedOn$User$ProfileInfoFromJson(
-        Map<String, dynamic> json) {
-  return WorkoutDetailsMixin$BasedOn$User$ProfileInfo()
-    ..username = json['username'] as String?;
-}
-
-Map<String, dynamic> _$WorkoutDetailsMixin$BasedOn$User$ProfileInfoToJson(
-        WorkoutDetailsMixin$BasedOn$User$ProfileInfo instance) =>
-    <String, dynamic>{
-      'username': instance.username,
-    };
-
-WorkoutDetailsMixin$BasedOn$User _$WorkoutDetailsMixin$BasedOn$UserFromJson(
-    Map<String, dynamic> json) {
-  return WorkoutDetailsMixin$BasedOn$User()
-    ..profileInfo = json['profileInfo'] == null
-        ? null
-        : WorkoutDetailsMixin$BasedOn$User$ProfileInfo.fromJson(
-            json['profileInfo'] as Map<String, dynamic>);
-}
-
-Map<String, dynamic> _$WorkoutDetailsMixin$BasedOn$UserToJson(
-        WorkoutDetailsMixin$BasedOn$User instance) =>
-    <String, dynamic>{
-      'profileInfo': instance.profileInfo?.toJson(),
-    };
-
 WorkoutDetailsMixin$BasedOn _$WorkoutDetailsMixin$BasedOnFromJson(
     Map<String, dynamic> json) {
   return WorkoutDetailsMixin$BasedOn()
     ..id = json['id'] as String
-    ..name = json['name'] as String
-    ..user = WorkoutDetailsMixin$BasedOn$User.fromJson(
-        json['user'] as Map<String, dynamic>);
+    ..name = json['name'] as String;
 }
 
 Map<String, dynamic> _$WorkoutDetailsMixin$BasedOnToJson(
@@ -398,7 +405,6 @@ Map<String, dynamic> _$WorkoutDetailsMixin$BasedOnToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'user': instance.user.toJson(),
     };
 
 WorkoutDetailsMixin$User$ProfileInfo
@@ -662,6 +668,22 @@ CreateUserArguments _$CreateUserArgumentsFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$CreateUserArgumentsToJson(
         CreateUserArguments instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'profileInfo': instance.profileInfo.toJson(),
+    };
+
+UpdateProfileInfoArguments _$UpdateProfileInfoArgumentsFromJson(
+    Map<String, dynamic> json) {
+  return UpdateProfileInfoArguments(
+    id: json['id'] as String,
+    profileInfo:
+        ProfileInfoInput.fromJson(json['profileInfo'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$UpdateProfileInfoArgumentsToJson(
+        UpdateProfileInfoArguments instance) =>
     <String, dynamic>{
       'id': instance.id,
       'profileInfo': instance.profileInfo.toJson(),

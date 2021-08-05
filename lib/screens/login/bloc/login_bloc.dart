@@ -35,13 +35,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else if (event is VerifyOtpEvent) {
       yield LoadingState();
       try {
-        firebaseAuth.UserCredential result =
-            await _authenticationRepository.verifyAndLogin(verID, event.otp);
-        if (result.user != null) {
-          yield LoginCompleteState(
-            result.user!.toUser,
-            _authenticationRepository.profileInfo,
-          );
+        User user = await _authenticationRepository.verifyAndLogin(
+          verID,
+          event.otp,
+        );
+        if (user.isNotEmpty) {
+          yield LoginCompleteState(user);
         } else {
           yield OtpExceptionState(message: "Invalid otp!");
         }
@@ -58,9 +57,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         add(event);
       });
     } else if (event is SignUpCompleteEvent) {
-      ProfileInfoMixin$ProfileInfo? profileInfo =
-          await _authenticationRepository.getProfileInfo(event.user.id);
-      yield LoginCompleteState(event.user, profileInfo);
+      yield LoginCompleteState(event.user);
     } else if (event is SignUpExceptionEvent) {
       yield InitialLoginState();
     } else if (event is LogoutEvent) {
@@ -95,7 +92,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }) async* {
     StreamController<LoginEvent> eventStream = StreamController();
     try {
-      final result = await _authenticationRepository.signUp(
+      await _authenticationRepository.signUp(
         _authenticationRepository.currentUser.id,
         ProfileInfoInput(
           username: username,
@@ -105,14 +102,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           weight: weight,
         ),
       );
-      eventStream.add(
-        SignUpCompleteEvent(
-          _authenticationRepository.currentUser,
-          ProfileInfoMixin$ProfileInfo.fromJson(
-            result.data!["createUser"]["profileInfo"],
-          ),
-        ),
-      );
+      eventStream.add(SignUpCompleteEvent(
+        _authenticationRepository.currentUser.copyWith(isSignedUp: true),
+      ));
       eventStream.close();
     } catch (e) {
       eventStream.add(
@@ -155,11 +147,5 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     yield* eventStream.stream;
-  }
-}
-
-extension on firebaseAuth.User {
-  User get toUser {
-    return User(id: uid, email: email, phoneNumber: phoneNumber);
   }
 }

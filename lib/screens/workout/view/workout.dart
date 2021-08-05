@@ -2,7 +2,6 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql/client.dart';
 import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -148,15 +147,11 @@ class _WorkoutPageState extends State<WorkoutPage> {
                             text: "http://workout.app/view/$workoutId",
                           ),
                         );
-                        Fluttertoast.showToast(
-                          msg: "Copied to clipboard",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
-                        );
+                        ScaffoldMessenger.of(context)
+                          ..hideCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(content: Text("Copied to clipboard")),
+                          );
                       },
                       icon: Icon(Icons.copy),
                     ),
@@ -176,7 +171,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -395,12 +390,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
       child: LoadingOverlay(
         isLoading: _isLoading,
         child: Scaffold(
-          backgroundColor:
-              ThemeProvider.of(context)?.brightness == Brightness.light
-                  ? Colors.white
-                  : Colors.black,
           body: Container(
-            margin: EdgeInsets.only(top: 48.0),
+            margin: EdgeInsets.only(top: 40.0),
             child: MultiBlocListener(
               listeners: [
                 BlocListener<DeleteWorkoutBloc,

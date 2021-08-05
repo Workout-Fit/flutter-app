@@ -9,21 +9,17 @@ import 'phone_form.dart';
 
 class LoginPage extends StatelessWidget {
   static const String routeName = 'login';
-  final AuthenticationRepository authenticationRepository;
   final String subRouteName;
 
-  const LoginPage({
-    Key? key,
-    required this.authenticationRepository,
-    required this.subRouteName,
-  }) : super(key: key);
+  const LoginPage({Key? key, required this.subRouteName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(
-          authenticationRepository: authenticationRepository,
+          authenticationRepository:
+              RepositoryProvider.of<AuthenticationRepository>(context),
         ),
         child: BlocListener<LoginBloc, LoginState>(
           listener: (context, loginState) {

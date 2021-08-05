@@ -50,6 +50,7 @@ type Mutation {
   createUser(profileInfo: ProfileInfoInput!, userId: String!): User
   createWorkout(workout: WorkoutInput!): Workout
   deleteWorkout(id: String!): Workout
+  updateProfileInfo(profileInfo: ProfileInfoInput!, userId: String!): User
   updateWorkout(workout: WorkoutInput!): Workout
 }
 
@@ -125,7 +126,7 @@ input ProfileInfoInput {
   bio: String
   height: Float
   name: String!
-  profilePicture: String
+  profilePicture: Upload
   username: String!
   weight: Float
 }
@@ -138,3 +139,7 @@ input WorkoutInput {
   name: String!
   userId: String!
 }
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

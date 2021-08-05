@@ -34,8 +34,8 @@ class PhoneFormState extends State<PhoneForm> {
         child: Scaffold(
           body: Container(
             padding: EdgeInsets.only(
-              left: 24.0,
-              right: 24.0,
+              left: 16.0,
+              right: 16.0,
               top: 88.0,
               bottom: 40.0,
             ),
