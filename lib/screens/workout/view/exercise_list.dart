@@ -33,7 +33,7 @@ class ExerciseList extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return ItemCard(
                     key: UniqueKey(),
-                    title: exercises[index]?.exercise?.name ?? "",
+                    title: exercises[index]?.exercise.name ?? "",
                     subtitle: "${exercises[index]?.sets} sets, " +
                         "${exercises[index]?.repetitions} repetitions. " +
                         "Rest for ${exercises[index]?.rest}''",
@@ -45,7 +45,7 @@ class ExerciseList extends StatelessWidget {
                     },
                     label: [
                       Text(
-                        exercises[index]?.exercise!.muscleGroup!.name ?? "",
+                        exercises[index]?.exercise.muscleGroup.name ?? "",
                         style: Theme.of(context).textTheme.subtitle2,
                       )
                     ],

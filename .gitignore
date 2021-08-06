@@ -9,6 +9,12 @@
 .history
 .svn/
 
+# Generated files
+*.g.dart
+schema.dart
+schema.graphql.dart
+schema.graphql.g.dart
+
 .env
 .env.development
 

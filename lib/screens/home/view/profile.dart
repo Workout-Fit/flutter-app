@@ -246,7 +246,7 @@ class _ProfilePageState extends State<ProfilePage> {
           setState(() {
             _heightController = profileInfo?.height ?? 1.5;
             _weightController = profileInfo?.weight ?? 50.0;
-            _nameController.text = profileInfo!.name!;
+            _nameController.text = profileInfo!.name;
             _bioController.text = profileInfo.bio ?? '';
             _editMode = true;
           });
@@ -348,7 +348,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           UpdateProfileInfoArguments(
                             id: user.id,
                             profileInfo: ProfileInfoInput(
-                              username: user.profileInfo!.username!,
+                              username: user.profileInfo!.username,
                               name: _nameController.text,
                               height: _heightController,
                               weight: _weightController,
@@ -387,12 +387,7 @@ class _ProfilePageState extends State<ProfilePage> {
         bloc: _getProfileInfoBloc,
         builder: (context, state) {
           return state.maybeWhen(
-            loaded: (data, _) {
-              if (data.getUserById != null)
-                return _profileInfoPage(data.getUserById!);
-              else
-                return Container();
-            },
+            loaded: (data, _) => _profileInfoPage(data.getUserById),
             loading: (_) => Expanded(
               child: Center(
                 child: CircularProgressIndicator(

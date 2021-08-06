@@ -48,7 +48,7 @@ void main() {
         );
 
         expect(
-          find.text(exercises[0].exercise!.muscleGroup!.name),
+          find.text(exercises[0].exercise.muscleGroup.name),
           findsOneWidget,
         );
       },

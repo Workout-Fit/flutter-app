@@ -115,7 +115,7 @@ class _NewWorkoutPageState extends State<NewWorkoutPage> {
                                     description: _descriptionController.text,
                                     exercises: _exercises
                                         .map(
-                                          (exercise) => ExercisesInput(
+                                          (exercise) => WorkoutExerciseInput(
                                             exerciseId: exercise.exerciseId,
                                             repetitions: exercise.repetitions,
                                             rest: exercise.rest,

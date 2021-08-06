@@ -84,7 +84,7 @@ class _ExerciseFormState extends State<ExerciseForm> {
                       return Container(
                         child: ListTile(
                           title: Text(item?.name ?? ""),
-                          subtitle: Text(item?.muscleGroup?.name ?? ""),
+                          subtitle: Text(item?.muscleGroup.name ?? ""),
                         ),
                       );
                     },

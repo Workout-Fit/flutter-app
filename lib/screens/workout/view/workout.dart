@@ -210,7 +210,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
               ],
             ),
           ),
-          ExerciseList(exercises: workout.exercises ?? [])
+          ExerciseList(exercises: workout.exercises)
         ],
       ),
     );
@@ -257,7 +257,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
           setState(() {
             _nameController.text = workout.name;
             _descriptionController.text = workout.description ?? '';
-            _exercises = List.from(workout.exercises ?? []);
+            _exercises = List.from(workout.exercises);
             _editMode = true;
           });
         else if (value == "delete") {
@@ -336,7 +336,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                                   ).state.user.id,
                                   description: _descriptionController.text,
                                   exercises: _exercises
-                                      .map((exercise) => ExercisesInput(
+                                      .map((exercise) => WorkoutExerciseInput(
                                             exerciseId: exercise.exerciseId,
                                             repetitions: exercise.repetitions,
                                             rest: exercise.rest,

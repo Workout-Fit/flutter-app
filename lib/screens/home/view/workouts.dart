@@ -61,7 +61,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
     }
 
     final workouts = data.getWorkoutsByUserId;
-    if (data.getWorkoutsByUserId?.length == 0) {
+    if (data.getWorkoutsByUserId.length == 0) {
       return Flexible(
         child: Center(
           child: Text("No workouts were found."),
@@ -73,7 +73,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
           onRefresh: _handleRefreshStart,
           child: ListView.separated(
             padding: EdgeInsets.only(bottom: 32.0),
-            itemCount: workouts?.length ?? 0,
+            itemCount: workouts.length,
             separatorBuilder: (BuildContext context, int index) {
               return SizedBox(height: 16.0);
             },
@@ -83,7 +83,7 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                   Icon(WorkoutIcons.barbell, size: 16.0),
                   SizedBox(width: 4),
                   Text(
-                    workouts?[index]?.exercises?.length.toString() ?? '0',
+                    workouts[index].exercises.length.toString(),
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                 ],
@@ -92,15 +92,15 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                       .pushNamed(
                     WorkoutPage.routeName,
                     arguments: WorkoutArguments(
-                      workoutId: workouts?[index]?.id ?? '',
+                      workoutId: workouts[index].id,
                     ),
                   )
                       .then((value) {
                     _workoutsBloc.refetch();
                   });
                 },
-                title: workouts?[index]?.name ?? '',
-                subtitle: workouts?[index]?.muscleGroups.join(", "),
+                title: workouts[index].name,
+                subtitle: workouts[index].muscleGroups.join(", "),
               );
             },
           ),
