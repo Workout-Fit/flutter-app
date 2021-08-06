@@ -36,8 +36,8 @@ query GetWorkoutById($id: String!) {
   }
 }
 
-mutation UpdateWorkout($workout: WorkoutInput!) {
-  updateWorkout(workout: $workout) {
+mutation UpdateWorkout($id: String!, $workout: WorkoutInput!) {
+  updateWorkout(workout: $workout, id: $id) {
     ...WorkoutDetails
   }
 }

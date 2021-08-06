@@ -104,7 +104,7 @@ class AuthenticationRepository {
       ),
     );
 
-    return result.data!.isNotEmpty;
+    return result.data != null;
   }
 
   Future<void> logOut() async {

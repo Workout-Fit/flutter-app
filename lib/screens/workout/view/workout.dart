@@ -328,22 +328,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         return IconButton(
                           onPressed: () {
                             _updateWorkoutBloc.run(UpdateWorkoutArguments(
+                                id: workout.id,
                                 workout: WorkoutInput(
-                              id: workout.id,
-                              name: _nameController.text,
-                              userId: BlocProvider.of<AuthenticationBloc>(
-                                context,
-                              ).state.user.id,
-                              description: _descriptionController.text,
-                              exercises: _exercises
-                                  .map((exercise) => ExercisesInput(
-                                        exerciseId: exercise.exerciseId,
-                                        repetitions: exercise.repetitions,
-                                        rest: exercise.rest,
-                                        sets: exercise.sets,
-                                      ))
-                                  .toList(),
-                            )).toJson());
+                                  name: _nameController.text,
+                                  userId: BlocProvider.of<AuthenticationBloc>(
+                                    context,
+                                  ).state.user.id,
+                                  description: _descriptionController.text,
+                                  exercises: _exercises
+                                      .map((exercise) => ExercisesInput(
+                                            exerciseId: exercise.exerciseId,
+                                            repetitions: exercise.repetitions,
+                                            rest: exercise.rest,
+                                            sets: exercise.sets,
+                                          ))
+                                      .toList(),
+                                )).toJson());
                           },
                           icon: const Icon(Icons.save),
                         );

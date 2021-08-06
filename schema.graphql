@@ -6,120 +6,97 @@ schema {
 }
 
 type Difficulty {
-  id: String!
+  id: Float!
   name: String!
 }
 
 type Equipment {
-  id: String!
+  id: Float!
   name: String!
 }
 
 type Exercise {
-  difficulty: Difficulty
-  difficultyId: Int
-  equipment: Equipment
-  equipmentId: Int
-  exerciseType: ExerciseType
-  exerciseTypeId: Int
+  difficulty: Difficulty!
+  equipment: Equipment!
+  exerciseType: ExerciseType!
   id: String!
-  language: Language
-  muscleGroup: MuscleGroup
-  muscleGroupId: Int
-  name: String
+  language: Language!
+  muscleGroup: MuscleGroup!
+  name: String!
 }
 
 type ExerciseType {
-  id: String!
+  id: Float!
   name: String!
 }
 
 type Language {
-  id: String!
+  id: Float!
   languageCode: String!
   name: String!
 }
 
 type MuscleGroup {
-  id: String!
+  id: Float!
   name: String!
 }
 
 type Mutation {
-  copyWorkoutById(id: String!, userId: String!): Workout
-  createUser(profileInfo: ProfileInfoInput!, userId: String!): User
-  createWorkout(workout: WorkoutInput!): Workout
-  deleteWorkout(id: String!): Workout
-  updateProfileInfo(profileInfo: ProfileInfoInput!, userId: String!): User
-  updateWorkout(workout: WorkoutInput!): Workout
+  copyWorkoutById(id: String!, userId: String!): Workout!
+  createUser(profileInfo: ProfileInfoInput!, userId: String!): User!
+  createWorkout(workout: WorkoutInput!): Workout!
+  deleteWorkout(id: String!): Workout!
+  updateProfileInfo(profileInfo: ProfileInfoInput!, userId: String!): User!
+  updateWorkout(id: String!, workout: WorkoutInput!): Workout!
 }
 
 type ProfileInfo {
   bio: String
   height: Float
-  name: String
-  profilePicture: String
-  username: String
+  name: String!
+  profilePicture: Upload
+  username: String!
   weight: Float
 }
 
 type Query {
-  getDifficultyById(id: String!): Difficulty
-  getDifficultyLevels: [Difficulty]
-  getDifficultyLevelsByName(name: String!): Difficulty
-  getEquipmentById(id: String!): Equipment
-  getEquipments: [Equipment]
-  getEquipmentsByName(name: String!): Equipment
-  getExerciseById(id: String!): Exercise
-  getExerciseTypeById(id: String!): ExerciseType
-  getExerciseTypes: [ExerciseType]
-  getExerciseTypesByName(name: String!): [ExerciseType]
-  getExercises(difficultyId: Int, equipmentId: Int, exerciseTypeId: Int, muscleGroupId: Int, name: String): [Exercise]
-  getLanguageById(id: String!): Language
-  getLanguages(languageCode: String, name: String): [Language]
-  getMuscleGroupById(id: String!): MuscleGroup
-  getMuscleGroups: [MuscleGroup]
-  getMuscleGroupsByName(name: String!): MuscleGroup
-  getUserById(id: String!): User
-  getWorkoutById(id: String!): Workout
-  getWorkoutsByUserId(userId: String!): [Workout]
+  getExerciseById(id: String!): Exercise!
+  getExerciseTypeById(id: Float!): ExerciseType!
+  getExerciseTypes(name: String): [ExerciseType!]!
+  getExercises(difficultyId: Float, equipmentId: Float, exerciseTypeId: Float, muscleGroupId: Float, name: String): [Exercise!]!
+  getLanguageById(id: Float!): Language!
+  getLanguages(id: String, name: String): [Language!]!
+  getMuscleGroupById(id: Float!): MuscleGroup!
+  getMuscleGroups(name: String): [MuscleGroup!]!
+  getUserById(id: String!): User!
+  getWorkoutById(id: String!): Workout!
+  getWorkoutsByUserId(userId: String!): [Workout!]!
 }
 
 type User {
   id: String!
   profileInfo: ProfileInfo
-  workout: [Workout]
 }
 
 type Workout {
   basedOn: Workout
-  basedOnId: String
   description: String
-  exercises: [WorkoutExercise]
+  exercises: [WorkoutExercise!]!
   id: String!
-  muscleGroups: [String]!
+  muscleGroups: [String!]!
   name: String!
   user: User!
   userId: String!
 }
 
 type WorkoutExercise {
-  exercise: Exercise
+  exercise: Exercise!
   exerciseId: String!
   notes: String
-  repetitions: Int!
-  rest: Int!
-  sets: Int!
-  workout: Workout
+  repetitions: Float!
+  rest: Float!
+  sets: Float!
   workoutId: String!
-}
-
-input ExercisesInput {
-  exerciseId: String!
-  notes: String
-  repetitions: Int!
-  rest: Int!
-  sets: Int!
 }
 
 input ProfileInfoInput {
@@ -131,11 +108,19 @@ input ProfileInfoInput {
   weight: Float
 }
 
+input WorkoutExerciseInput {
+  exerciseId: String!
+  notes: String
+  repetitions: Float!
+  rest: Float!
+  sets: Float!
+  workoutId: String!
+}
+
 input WorkoutInput {
   basedOnId: String
   description: String
-  exercises: [ExercisesInput]
-  id: String
+  exercises: [WorkoutExerciseInput!]!
   name: String!
   userId: String!
 }

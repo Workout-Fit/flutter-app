@@ -756,6 +756,7 @@ Map<String, dynamic> _$GetWorkoutByIdArgumentsToJson(
 UpdateWorkoutArguments _$UpdateWorkoutArgumentsFromJson(
     Map<String, dynamic> json) {
   return UpdateWorkoutArguments(
+    id: json['id'] as String,
     workout: WorkoutInput.fromJson(json['workout'] as Map<String, dynamic>),
   );
 }
@@ -763,6 +764,7 @@ UpdateWorkoutArguments _$UpdateWorkoutArgumentsFromJson(
 Map<String, dynamic> _$UpdateWorkoutArgumentsToJson(
         UpdateWorkoutArguments instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'workout': instance.workout.toJson(),
     };
 
