@@ -4,6 +4,7 @@ import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,8 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:workout/api/schema.dart';
 import 'package:workout/app/bloc/authentication_bloc.dart';
+import 'package:workout/app/view/app.dart';
+import 'package:workout/models/User.dart';
 import 'package:workout/screens/home/bloc/get_profile_info_bloc.dart';
 import 'package:workout/screens/home/bloc/update_profile_info_bloc.dart';
 import 'package:workout/screens/login/view/login.dart';
@@ -246,8 +249,8 @@ class _ProfilePageState extends State<ProfilePage> {
           setState(() {
             _heightController = profileInfo?.height ?? 1.5;
             _weightController = profileInfo?.weight ?? 50.0;
-            _nameController.text = profileInfo!.name;
-            _bioController.text = profileInfo.bio ?? '';
+            _nameController.text = profileInfo?.name ?? '';
+            _bioController.text = profileInfo?.bio ?? '';
             _editMode = true;
           });
         else if (value == "logout") {
@@ -276,6 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         LoginPage.routeName,
                         (route) => false,
                       );
+                      Hive.box(appBox).delete(User.boxKeyName);
                     },
                     child: Text("Log-out"),
                   ),
@@ -366,7 +370,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         );
                       }
                     },
-                    icon: Icon(Icons.save_outlined),
+                    icon: Icon(Icons.save),
                   ),
                 ),
               ],
@@ -388,12 +392,17 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, state) {
           return state.maybeWhen(
             loaded: (data, _) => _profileInfoPage(data.getUserById),
-            loading: (_) => Expanded(
-              child: Center(
-                child: CircularProgressIndicator(
-                  semanticsLabel: "Loading workout",
+            loading: (_) => Flex(
+              direction: Axis.vertical,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      semanticsLabel: "Loading workout",
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             orElse: () => Container(),
           );

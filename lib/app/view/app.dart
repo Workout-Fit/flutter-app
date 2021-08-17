@@ -28,7 +28,7 @@ class App extends StatelessWidget {
           authenticationRepository: authenticationRepository,
         ),
         child: ThemeProvider(
-          initTheme: Hive.box('workout').get(darkModeKey, defaultValue: false)
+          initTheme: Hive.box(appBox).get(darkModeKey, defaultValue: false)
               ? darkTheme
               : lightTheme,
           builder: (context, currentTheme) {

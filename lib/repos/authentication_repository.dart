@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:graphql/client.dart';
 import 'package:hive/hive.dart';
 import 'package:workout/api/schema.dart';
+import 'package:workout/app/view/app.dart';
 import 'package:workout/models/User.dart';
 import 'package:workout/utils/graphql_client.dart';
 
@@ -15,7 +16,7 @@ class LogOutFailure implements Exception {}
 
 class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
-  final _userBox = Hive.box('workout');
+  final _hiveBox = Hive.box(appBox);
 
   AuthenticationRepository({
     firebase_auth.FirebaseAuth? firebaseAuth,
@@ -75,7 +76,9 @@ class AuthenticationRepository {
       ),
     );
 
-    currentUser = currentUser.copyWith(isSignedUp: result.data!.isNotEmpty);
+    currentUser = currentUser.copyWith(
+      isSignedUp: result.data?['createUser']['profileInfo'] != null,
+    );
 
     return currentUser;
   }
@@ -85,10 +88,10 @@ class AuthenticationRepository {
       if (firebaseUser != null) {
         final isSignedUp = await this.isCurrentUserSignedUp(firebaseUser.uid);
         final user = firebaseUser.toUser(isSignedUp);
-        _userBox.put(User.boxKeyName, user);
+        _hiveBox.put(User.boxKeyName, user);
         return user;
       } else {
-        _userBox.put(User.boxKeyName, User.empty);
+        _hiveBox.put(User.boxKeyName, User.empty);
         return User.empty;
       }
     });
@@ -104,7 +107,7 @@ class AuthenticationRepository {
       ),
     );
 
-    return result.data != null;
+    return result.data?['getUserById']['profileInfo'] != null;
   }
 
   Future<void> logOut() async {
@@ -115,10 +118,10 @@ class AuthenticationRepository {
     }
   }
 
-  User get currentUser => _userBox.get(User.boxKeyName) ?? User.empty;
+  User get currentUser => _hiveBox.get(User.boxKeyName) ?? User.empty;
 
   set currentUser(User user) {
-    _userBox.put(User.boxKeyName, user);
+    _hiveBox.put(User.boxKeyName, user);
   }
 }
 
