@@ -13,6 +13,7 @@ const surface = Color(0xFFFAFAFA);
 final lightTheme = ThemeData(
   brightness: Brightness.light,
   scaffoldBackgroundColor: surface,
+  backgroundColor: surface,
   primaryColor: primaryColor,
   accentColor: primaryColor,
   colorScheme:
@@ -20,6 +21,7 @@ final lightTheme = ThemeData(
     primary: primaryColor,
     brightness: Brightness.light,
     secondary: primaryColor,
+    background: surface,
   ),
   fontFamily: GoogleFonts.getFont('Overpass').fontFamily,
   textTheme: TextTheme(

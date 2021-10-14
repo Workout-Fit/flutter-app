@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive/hive.dart';
@@ -15,7 +14,7 @@ void main() async {
   Hive.registerAdapter(UserAdapter());
   await Hive.openBox(appBox);
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: kDebugMode ? ".env.development" : ".env");
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
   final authenticationRepository = AuthenticationRepository();
   runApp(App(authenticationRepository: authenticationRepository));
