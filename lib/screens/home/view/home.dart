@@ -1,4 +1,3 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:workout/presentation/workout_icons.dart';
@@ -42,70 +41,66 @@ class _HomePageState extends State<HomePage> {
         }
         return true;
       },
-      child: ThemeSwitchingArea(
-        child: Scaffold(
-          body: Navigator(
-            key: _navigatorKey,
-            initialRoute: widget.subRouteName,
-            onGenerateRoute: _onGenerateRoute,
-          ),
-          floatingActionButton: _navigationSelectedIndex == 0
-              ? SpeedDial(
-                  icon: Icons.add,
-                  activeIcon: Icons.close,
-                  overlayColor: Colors.black,
-                  overlayOpacity: 0.3,
-                  openCloseDial: _dialOpen,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                  children: [
-                    SpeedDialChild(
-                      onTap: () => Navigator.pushNamed(
-                        context,
-                        NewWorkoutPage.routeName,
-                      ),
-                      child: const Icon(Icons.add),
-                      label: "Add Workout",
+      child: Scaffold(
+        body: Navigator(
+          key: _navigatorKey,
+          initialRoute: widget.subRouteName,
+          onGenerateRoute: _onGenerateRoute,
+        ),
+        floatingActionButton: _navigationSelectedIndex == 0
+            ? SpeedDial(
+                icon: Icons.add,
+                activeIcon: Icons.close,
+                overlayColor: Colors.black,
+                overlayOpacity: 0.3,
+                openCloseDial: _dialOpen,
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                children: [
+                  SpeedDialChild(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      NewWorkoutPage.routeName,
                     ),
-                    SpeedDialChild(
-                      onTap: () =>
-                          Navigator.pushNamed(context, ScanQRPage.routeName),
-                      child: const Icon(Icons.qr_code_scanner),
-                      label: "Import Workout",
-                    ),
-                  ],
-                )
-              : null,
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              const BottomNavigationBarItem(
-                icon: const Icon(WorkoutIcons.barbell),
-                label: "Workouts",
-              ),
-              const BottomNavigationBarItem(
-                icon: const Icon(Icons.person),
-                label: "Profile",
-              ),
-            ],
-            onTap: (int index) {
-              if (_navigationSelectedIndex != index) {
-                switch (index) {
-                  case 0:
-                    _navigatorKey.currentState!
-                        .pushNamed(WorkoutsPage.routeName);
-                    break;
-                  case 1:
-                    _navigatorKey.currentState!
-                        .pushNamed(ProfilePage.routeName);
-                    break;
-                }
+                    child: const Icon(Icons.add),
+                    label: "Add Workout",
+                  ),
+                  SpeedDialChild(
+                    onTap: () =>
+                        Navigator.pushNamed(context, ScanQRPage.routeName),
+                    child: const Icon(Icons.qr_code_scanner),
+                    label: "Import Workout",
+                  ),
+                ],
+              )
+            : null,
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            const BottomNavigationBarItem(
+              icon: const Icon(WorkoutIcons.barbell),
+              label: "Workouts",
+            ),
+            const BottomNavigationBarItem(
+              icon: const Icon(Icons.person),
+              label: "Profile",
+            ),
+          ],
+          onTap: (int index) {
+            if (_navigationSelectedIndex != index) {
+              switch (index) {
+                case 0:
+                  _navigatorKey.currentState!.pushNamed(WorkoutsPage.routeName);
+                  break;
+                case 1:
+                  _navigatorKey.currentState!.pushNamed(ProfilePage.routeName);
+                  break;
               }
-              setState(() {
-                _navigationSelectedIndex = index;
-              });
-            },
-            currentIndex: _navigationSelectedIndex,
-          ),
+            }
+            setState(() {
+              _navigationSelectedIndex = index;
+            });
+          },
+          currentIndex: _navigationSelectedIndex,
         ),
       ),
     );

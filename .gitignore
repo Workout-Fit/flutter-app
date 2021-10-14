@@ -16,8 +16,7 @@ schema.graphql.dart
 schema.graphql.g.dart
 
 .env
-.env.development
-
+android/*.jks
 # IntelliJ related
 *.iml
 *.ipr

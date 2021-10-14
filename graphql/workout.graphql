@@ -1,5 +1,5 @@
-query GetWorkoutsByUserId($userId: String!) {
-  getWorkoutsByUserId(userId: $userId) {
+query GetWorkoutsByUserId($userId: String!, $workoutName: String) {
+  getWorkoutsByUserId(userId: $userId, workoutName: $workoutName) {
     __typename
     id
     name

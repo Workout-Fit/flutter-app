@@ -1,7 +1,7 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:theme_provider/theme_provider.dart';
 import 'package:workout/app/bloc/authentication_bloc.dart';
 import 'package:workout/repos/authentication_repository.dart';
 import 'package:workout/screens/home/home.dart';
@@ -11,7 +11,7 @@ import 'package:workout/screens/workout/workout.dart';
 import 'package:workout/theme/theme.dart';
 
 const appBox = 'workout';
-const darkModeKey = 'darkMode';
+const themeKey = 'theme';
 
 class App extends StatelessWidget {
   final AuthenticationRepository authenticationRepository;
@@ -27,32 +27,48 @@ class App extends StatelessWidget {
         create: (context) => AuthenticationBloc(
           authenticationRepository: authenticationRepository,
         ),
-        child: ThemeProvider(
-          initTheme: Hive.box(appBox).get(darkModeKey, defaultValue: false)
-              ? darkTheme
-              : lightTheme,
-          builder: (context, currentTheme) {
-            return BlocConsumer<AuthenticationBloc, AuthenticationState>(
-              listener: (BuildContext context, AuthenticationState state) {
-                if (state.user.isNotEmpty && state.user.isSignedUp) {
-                  _navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                      HomePage.routeName, (route) => false);
-                } else if (state.user.isNotEmpty && !state.user.isSignedUp) {
-                  _navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                      SignUpPage.routeName, (route) => false);
-                } else
-                  _navigatorKey.currentState!.pushNamedAndRemoveUntil(
-                      LoginPage.routeName, (route) => false);
+        child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+          listener: (BuildContext context, AuthenticationState state) {
+            if (state.user.isNotEmpty && state.user.isSignedUp) {
+              _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+                  HomePage.routeName, (route) => false);
+            } else if (state.user.isNotEmpty && !state.user.isSignedUp) {
+              _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+                  SignUpPage.routeName, (route) => false);
+            } else
+              _navigatorKey.currentState!.pushNamedAndRemoveUntil(
+                  LoginPage.routeName, (route) => false);
+          },
+          builder: (BuildContext context, AuthenticationState state) {
+            return ThemeProvider(
+              defaultThemeId:
+                  Hive.box(appBox).get(themeKey, defaultValue: 'light'),
+              themes: [
+                AppTheme(
+                  id: 'light',
+                  description: 'Default theme',
+                  data: lightTheme,
+                ),
+                AppTheme(
+                  id: 'dark',
+                  description: 'Pitch black theme',
+                  data: darkTheme,
+                )
+              ],
+              onThemeChanged: (_, theme) {
+                Hive.box(appBox).put(themeKey, theme.id);
               },
-              builder: (BuildContext context, AuthenticationState state) {
-                return MaterialApp(
-                  title: 'Workout',
-                  navigatorKey: _navigatorKey,
-                  theme: currentTheme,
-                  initialRoute: _getInitialRoute(state),
-                  onGenerateRoute: (settings) => _generateRoutes(settings),
-                );
-              },
+              child: ThemeConsumer(
+                child: Builder(
+                  builder: (themeContext) => MaterialApp(
+                    title: 'Workout',
+                    navigatorKey: _navigatorKey,
+                    theme: ThemeProvider.themeOf(themeContext).data,
+                    initialRoute: _getInitialRoute(state),
+                    onGenerateRoute: (settings) => _generateRoutes(settings),
+                  ),
+                ),
+              ),
             );
           },
         ),

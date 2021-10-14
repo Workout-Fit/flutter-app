@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
@@ -77,16 +76,16 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(height: 16.0),
         Text(
           profileInfo?.name ?? '',
-          style: ThemeProvider.of(context)!.textTheme.headline4,
+          style: Theme.of(context).textTheme.headline4,
         ),
         Text(
           profileInfo?.username ?? '',
-          style: ThemeProvider.of(context)!.textTheme.caption,
+          style: Theme.of(context).textTheme.caption,
         ),
         const SizedBox(height: 16.0),
         Text(
           profileInfo?.bio ?? 'No bio provided',
-          style: ThemeProvider.of(context)!.textTheme.bodyText1,
+          style: Theme.of(context).textTheme.bodyText1,
         ),
         const SizedBox(height: 16.0),
         Row(
@@ -96,24 +95,24 @@ class _ProfilePageState extends State<ProfilePage> {
               profileInfo?.weight != null
                   ? profileInfo!.weight.toString()
                   : '--',
-              style: ThemeProvider.of(context)!.textTheme.headline4,
+              style: Theme.of(context).textTheme.headline4,
             ),
             const SizedBox(width: 8.0),
             Text(
               'kg',
-              style: ThemeProvider.of(context)!.textTheme.caption,
+              style: Theme.of(context).textTheme.caption,
             ),
             const SizedBox(width: 64.0),
             Text(
               profileInfo?.height != null
                   ? profileInfo!.height.toString()
                   : '--',
-              style: ThemeProvider.of(context)!.textTheme.headline4,
+              style: Theme.of(context).textTheme.headline4,
             ),
             const SizedBox(width: 8.0),
             Text(
               'm',
-              style: ThemeProvider.of(context)!.textTheme.caption,
+              style: Theme.of(context).textTheme.caption,
             )
           ],
         ),
@@ -195,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(width: 8.0),
               Text(
                 'kg',
-                style: ThemeProvider.of(context)!.textTheme.caption,
+                style: Theme.of(context).textTheme.caption,
               ),
               const SizedBox(width: 64.0),
               DecimalNumberPicker(
@@ -211,7 +210,7 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(width: 8.0),
               Text(
                 'm',
-                style: ThemeProvider.of(context)!.textTheme.caption,
+                style: Theme.of(context).textTheme.caption,
               ),
             ]),
           ],

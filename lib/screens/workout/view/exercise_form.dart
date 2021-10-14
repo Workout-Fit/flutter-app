@@ -67,8 +67,9 @@ class _ExerciseFormState extends State<ExerciseForm> {
                       });
                     },
                     showSearchBox: true,
-                    onFind: (String filter) async =>
-                        fetchExercises(filter, context),
+                    onFind: (String? filter) async {
+                      return fetchExercises(filter, context);
+                    },
                     dropdownSearchDecoration: const InputDecoration(
                       filled: true,
                       contentPadding: EdgeInsets.symmetric(
@@ -91,7 +92,6 @@ class _ExerciseFormState extends State<ExerciseForm> {
                     dropdownBuilder: (
                       context,
                       SearchExercises$Query$GetExercises? item,
-                      index,
                     ) {
                       return Text(
                         item?.name ?? "Select an exercise",
@@ -101,13 +101,15 @@ class _ExerciseFormState extends State<ExerciseForm> {
                     },
                     showClearButton: true,
                     isFilteredOnline: true,
-                    searchBoxDecoration: InputDecoration(
-                      hintText: "Search for an exercise",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                          width: 0,
-                          style: BorderStyle.none,
+                    searchFieldProps: TextFieldProps(
+                      decoration: InputDecoration(
+                        hintText: "Search for an exercise",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
                         ),
                       ),
                     ),

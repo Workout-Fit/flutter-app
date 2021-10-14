@@ -1,4 +1,3 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:workout/api/schema.graphql.dart';
 import 'package:workout/widgets/item_card.dart';
@@ -19,7 +18,7 @@ class ExerciseList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        color: ThemeProvider.of(context)?.brightness == Brightness.light
+        color: Theme.of(context).brightness == Brightness.light
             ? Theme.of(context).backgroundColor
             : Colors.white.withOpacity(0.05),
         child: exercises.length == 0

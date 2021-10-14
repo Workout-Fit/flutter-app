@@ -1,4 +1,3 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,7 +123,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                   data: "http://workout.app/view/$workoutId",
                   padding: EdgeInsets.zero,
                   foregroundColor:
-                      ThemeProvider.of(context)?.brightness == Brightness.light
+                      Theme.of(context).brightness == Brightness.light
                           ? Colors.black
                           : Colors.white,
                   version: QrVersions.auto,
@@ -390,6 +389,9 @@ class _WorkoutPageState extends State<WorkoutPage> {
       child: LoadingOverlay(
         isLoading: _isLoading,
         child: Scaffold(
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.black,
           body: Container(
             margin: EdgeInsets.only(top: 40.0),
             child: MultiBlocListener(
@@ -411,7 +413,7 @@ class _WorkoutPageState extends State<WorkoutPage> {
                         });
                         Navigator.of(context).pop();
                       },
-                      error: (_, __) {
+                      error: (exception, result) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           errorSnackBar(
                             'Error when deleting Workout',

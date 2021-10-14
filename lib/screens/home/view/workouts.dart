@@ -1,21 +1,20 @@
 import 'dart:async';
 
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
 import 'package:graphql/client.dart';
-import 'package:hive/hive.dart';
+import 'package:theme_provider/theme_provider.dart';
 import 'package:workout/api/schema.dart';
 import 'package:workout/app/app.dart';
 import 'package:workout/app/bloc/authentication_bloc.dart';
 import 'package:workout/screens/home/bloc/get_workouts_bloc.dart';
+import 'package:workout/utils/debouncer.dart';
 import 'package:workout/utils/graphql_client.dart';
 import 'package:workout/presentation/workout_icons.dart';
 import 'package:workout/screens/workout/workout.dart';
-import 'package:workout/theme/theme.dart';
 import 'package:workout/widgets/item_card.dart';
 
 class WorkoutsPage extends StatefulWidget {
@@ -28,6 +27,7 @@ class WorkoutsPage extends StatefulWidget {
 class _WorkoutsPageState extends State<WorkoutsPage> {
   Completer<void> _refreshCompleter = Completer<void>();
   final WorkoutsBloc _workoutsBloc = WorkoutsBloc(client: client);
+  final Debouncer searchDebouncer = Debouncer(300);
 
   @override
   void initState() {
@@ -125,29 +125,14 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                   'Your workouts',
                   style: Theme.of(context).textTheme.headline4,
                 ),
-                ThemeSwitcher(
-                  builder: (context) {
-                    return IconButton(
-                      icon: Icon(
-                        ThemeProvider.of(context)?.brightness ==
-                                Brightness.light
-                            ? Icons.dark_mode_outlined
-                            : Icons.dark_mode,
-                      ),
-                      onPressed: () {
-                        Hive.box(appBox).put(
-                          darkModeKey,
-                          ThemeProvider.of(context)?.brightness ==
-                              Brightness.light,
-                        );
-                        ThemeSwitcher.of(context)?.changeTheme(
-                          theme: ThemeProvider.of(context)?.brightness ==
-                                  Brightness.light
-                              ? darkTheme
-                              : lightTheme,
-                        );
-                      },
-                    );
+                IconButton(
+                  icon: Icon(
+                    Theme.of(context).brightness == Brightness.light
+                        ? Icons.dark_mode_outlined
+                        : Icons.dark_mode,
+                  ),
+                  onPressed: () {
+                    ThemeProvider.controllerOf(context).nextTheme();
                   },
                 ),
               ],
@@ -163,6 +148,19 @@ class _WorkoutsPageState extends State<WorkoutsPage> {
                   child: TextField(
                     decoration:
                         InputDecoration(hintText: "Search for a workout..."),
+                    onChanged: (String text) {
+                      searchDebouncer.run(() {
+                        _workoutsBloc.run(
+                          variables: GetWorkoutsByUserIdArguments(
+                            userId: BlocProvider.of<AuthenticationBloc>(context)
+                                .state
+                                .user
+                                .id,
+                            workoutName: text,
+                          ).toJson(),
+                        );
+                      });
+                    },
                   ),
                 ),
                 IconButton(

@@ -11,9 +11,16 @@ const primaryColor = Color(0xFF6200EA);
 const surface = Color(0xFFFAFAFA);
 
 final lightTheme = ThemeData(
-  primarySwatch: Colors.deepPurple,
+  brightness: Brightness.light,
+  scaffoldBackgroundColor: surface,
   primaryColor: primaryColor,
   accentColor: primaryColor,
+  colorScheme:
+      ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(
+    primary: primaryColor,
+    brightness: Brightness.light,
+    secondary: primaryColor,
+  ),
   fontFamily: GoogleFonts.getFont('Overpass').fontFamily,
   textTheme: TextTheme(
     headline3: TextStyle(
@@ -39,7 +46,6 @@ final lightTheme = ThemeData(
     subtitle1: TextStyle(fontSize: 16, color: mediumEmphasisBlack),
     subtitle2: TextStyle(fontSize: 14, color: mediumEmphasisBlack),
   ),
-  backgroundColor: surface,
   cardTheme: CardTheme(
     elevation: 3,
     shadowColor: Colors.black.withOpacity(0.15),
@@ -59,6 +65,7 @@ final lightTheme = ThemeData(
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     selectedItemColor: primaryColor,
+    backgroundColor: Colors.white,
     unselectedItemColor: mediumEmphasisBlack,
   ),
   textButtonTheme: TextButtonThemeData(
@@ -85,12 +92,18 @@ final lightTheme = ThemeData(
 );
 
 final darkTheme = ThemeData(
+  scaffoldBackgroundColor: Colors.black,
   brightness: Brightness.dark,
   primarySwatch: Colors.deepPurple,
   primaryColor: primaryColor,
   accentColor: primaryColor,
+  colorScheme:
+      ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple).copyWith(
+    primary: primaryColor,
+    brightness: Brightness.dark,
+    secondary: primaryColor,
+  ),
   fontFamily: GoogleFonts.getFont('Overpass').fontFamily,
-  scaffoldBackgroundColor: Colors.black,
   textTheme: TextTheme(
     headline3: TextStyle(
       fontSize: 48,
@@ -115,7 +128,6 @@ final darkTheme = ThemeData(
     subtitle1: TextStyle(fontSize: 16, color: mediumEmphasisWhite),
     subtitle2: TextStyle(fontSize: 14, color: mediumEmphasisWhite),
   ),
-  backgroundColor: Colors.black,
   cardTheme: CardTheme(
     elevation: 1,
     color: Colors.white.withOpacity(0.10),

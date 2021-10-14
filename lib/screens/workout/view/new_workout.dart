@@ -1,4 +1,3 @@
-import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +5,6 @@ import 'package:graphql_flutter_bloc/graphql_flutter_bloc.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:workout/api/schema.dart';
 import 'package:workout/app/bloc/authentication_bloc.dart';
-import 'package:workout/screens/home/view/workouts.dart';
 import 'package:workout/screens/workout/bloc/create_workout_bloc.dart';
 import 'package:workout/screens/workout/workout.dart';
 import 'package:workout/screens/workout/view/workout_form.dart';
@@ -41,7 +39,7 @@ class _NewWorkoutPageState extends State<NewWorkoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: ThemeProvider.of(context)?.brightness == Brightness.light
+      backgroundColor: Theme.of(context).brightness == Brightness.light
           ? Colors.white
           : Colors.black,
       body: LoadingOverlay(
@@ -79,9 +77,8 @@ class _NewWorkoutPageState extends State<NewWorkoutPage> {
                                     content: const Text('Workout created'),
                                   ),
                                 );
-                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                Navigator.of(context).pushReplacementNamed(
                                   WorkoutPage.routeName,
-                                  ModalRoute.withName(WorkoutsPage.routeName),
                                   arguments: WorkoutArguments(
                                     workoutId: result.data?['createWorkout']
                                         ['id'],
